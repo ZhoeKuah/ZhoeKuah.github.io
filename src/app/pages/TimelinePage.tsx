@@ -42,10 +42,10 @@ export const TimelinePage = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
+      initial={{ opacity: 0, x: -100 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 100 }}
+      transition={{ duration: 0.5, ease: 'easeInOut' }}
       className="min-h-screen py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black via-gray-950 to-black"
     >
       <div className="max-w-5xl mx-auto">

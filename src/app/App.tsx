@@ -4,6 +4,7 @@ import { AnimatePresence } from 'motion/react';
 import { AudioProvider } from './components/AudioContext';
 import { SplashScreen } from './components/SplashScreen';
 import { Navbar } from './components/Navbar';
+import { ScrollToTop } from './components/ScrollToTop';
 import { HomePage } from './pages/HomePage';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { TimelinePage } from './pages/TimelinePage';
@@ -20,6 +21,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-black text-gray-100">
+      <ScrollToTop />
       <Navbar />
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>

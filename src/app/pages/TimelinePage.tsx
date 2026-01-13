@@ -56,12 +56,26 @@ export const TimelinePage = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
             Career Timeline
           </h1>
-          <p className="text-gray-400 text-xl">
-            A chronological journey through my professional growth
+          <p className="text-gray-300 text-xl mb-8 max-w-3xl mx-auto">
+            A chronological journey through my professional growth, tracking major milestones, 
+            projects, achievements, and learning experiences from 2020 to present.
           </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            {['2025', '2024', '2023', '2022', '2021', '2020'].map((year) => (
+              <motion.a
+                key={year}
+                href={`#${year}`}
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-4 py-2 bg-blue-500/20 border border-blue-500/50 rounded-lg text-blue-400 hover:border-blue-400 hover:bg-blue-500/30 transition-all"
+              >
+                {year}
+              </motion.a>
+            ))}
+          </div>
         </motion.div>
 
         {/* Timeline */}

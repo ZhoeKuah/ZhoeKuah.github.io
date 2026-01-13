@@ -88,23 +88,72 @@ export const HomePage = () => {
             transition={{ delay: 0.4, duration: 0.8 }}
             className="relative"
           >
-            <div className="bg-gray-900/50 backdrop-blur-sm border border-blue-500/30 rounded-lg p-6 shadow-xl shadow-blue-500/20">
+            <div className="bg-gray-900/50 backdrop-blur-sm border border-emerald-500/30 rounded-lg p-6 shadow-xl shadow-emerald-500/20">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-3 h-3 rounded-full bg-red-500" />
                 <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                <div className="w-3 h-3 rounded-full bg-green-500" />
+                <div className="w-3 h-3 rounded-full bg-emerald-500" />
               </div>
-              <div className="font-mono text-sm">
-                <div className="text-gray-500">$ whoami</div>
-                <div className="text-blue-400">Senior Engineer | Problem Solver | Tech Enthusiast</div>
-                <div className="text-gray-500 mt-2">$ cat skills.txt</div>
-                <div className="text-cyan-400">→ Robotics & Automation</div>
-                <div className="text-cyan-400">→ Full-Stack Development</div>
-                <div className="text-cyan-400">→ IoT & Embedded Systems</div>
-                <div className="text-gray-500 mt-2">$ status</div>
-                <div className="text-green-400">Ready for new challenges_<span className="animate-pulse">|</span></div>
+              <div className="font-mono text-sm space-y-3">
+                <div>
+                  <span className="text-gray-500">$ </span>
+                  <span className="text-white">whoami</span>
+                </div>
+                <div className="text-emerald-400 ml-4">
+                  Senior Engineer | Problem Solver | Tech Enthusiast
+                </div>
+                
+                <div className="mt-4">
+                  <span className="text-gray-500">$ </span>
+                  <span className="text-white">cat ~/skills/robotics.txt</span>
+                </div>
+                <div className="ml-4 space-y-1">
+                  <div className="text-cyan-400">→ ROS2 (Robot Operating System)</div>
+                  <div className="text-teal-400">→ Gazebo Simulation & Testing</div>
+                  <div className="text-blue-400">→ Computer Vision & SLAM</div>
+                </div>
+                
+                <div className="mt-4">
+                  <span className="text-gray-500">$ </span>
+                  <span className="text-white">ls -la ~/stack/</span>
+                </div>
+                <div className="ml-4 space-y-1">
+                  <div className="text-yellow-400">drwxr-xr-x Python</div>
+                  <div className="text-blue-400">drwxr-xr-x C++</div>
+                  <div className="text-orange-400">drwxr-xr-x HTML/CSS/JS</div>
+                  <div className="text-green-400">drwxr-xr-x Node.js</div>
+                  <div className="text-purple-400">drwxr-xr-x React</div>
+                </div>
+                
+                <div className="mt-4">
+                  <span className="text-gray-500">$ </span>
+                  <span className="text-white">./deploy_innovation.sh</span>
+                </div>
+                <div className="ml-4 text-emerald-400">
+                  <motion.span
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    ✓ Ready for new challenges
+                  </motion.span>
+                  <span className="animate-pulse">_</span>
+                </div>
               </div>
             </div>
+
+            {/* Code snippet decoration */}
+            <motion.div
+              animate={{ 
+                y: [0, -10, 0],
+                rotate: [0, 2, 0]
+              }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute -top-8 -right-8 bg-gray-800 border border-emerald-500/50 rounded-lg p-3 shadow-lg text-xs font-mono hidden lg:block"
+            >
+              <div className="text-purple-400">{'<Code>'}</div>
+              <div className="text-emerald-400 ml-2">passion++;</div>
+              <div className="text-purple-400">{'</Code>'}</div>
+            </motion.div>
           </motion.div>
         </div>
       </section>

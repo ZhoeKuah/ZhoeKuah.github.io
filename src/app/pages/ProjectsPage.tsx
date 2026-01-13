@@ -90,8 +90,53 @@ export const ProjectsPage = () => {
       transition={{ duration: 0.5, ease: 'easeInOut' }}
       className="min-h-screen"
     >
+      {/* Intro Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black via-gray-950 to-gray-900">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              Project Portfolio
+            </h1>
+            <p className="text-xl text-gray-300 mb-8">
+              A comprehensive showcase of my engineering work spanning hardware innovations, 
+              software solutions, and notable achievements in the tech industry.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4 mb-8">
+              <motion.a
+                href="#hardware"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-3 bg-gray-700/30 border-2 border-gray-500 rounded-lg text-gray-300 hover:border-gray-400 hover:text-white transition-all"
+              >
+                Hardware Projects
+              </motion.a>
+              <motion.a
+                href="#software"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-3 bg-blue-500/20 border-2 border-blue-500 rounded-lg text-blue-400 hover:border-blue-400 hover:text-blue-300 transition-all"
+              >
+                Software Projects
+              </motion.a>
+              <motion.a
+                href="#achievements"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-3 bg-cyan-500/20 border-2 border-cyan-500 rounded-lg text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-all"
+              >
+                Achievements
+              </motion.a>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Hardware Section */}
-      <section id="hardware" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-950 to-gray-900 scroll-mt-16">
+      <section id="hardware" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-900 to-gray-900 scroll-mt-16">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ y: 30, opacity: 0 }}

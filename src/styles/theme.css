@@ -124,6 +124,13 @@
     @apply border-border outline-ring/50;
   }
 
+  /* Hide default cursor on desktop only (not touch devices) */
+  @media (hover: hover) and (pointer: fine) {
+    *, *::before, *::after {
+      cursor: none !important;
+    }
+  }
+
   body {
     @apply bg-background text-foreground;
   }

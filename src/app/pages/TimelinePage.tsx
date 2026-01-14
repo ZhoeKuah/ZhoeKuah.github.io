@@ -2,11 +2,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { Briefcase, GraduationCap, Trophy, Lightbulb, MapPin, Calendar } from 'lucide-react';
 import { timelineData, groupByYear, TimelineEvent } from '../data/timelineData';
+import { ProjectModal, ProjectDetails } from '../components/ProjectModal';
 import { useAudio } from '../components/AudioContext';
 
 export const TimelinePage = () => {
   const { changeTrack } = useAudio();
-  const [expandedEvent, setExpandedEvent] = useState<string | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<ProjectDetails | null>(null);
   const groupedEvents = groupByYear(timelineData);
   const years = Object.keys(groupedEvents).sort((a, b) => Number(b) - Number(a));
 
@@ -38,6 +39,20 @@ export const TimelinePage = () => {
       case 'project':
         return 'green';
     }
+  };
+
+  const handleEventClick = (event: TimelineEvent) => {
+    const projectDetails: ProjectDetails = {
+      title: event.title,
+      subtitle: event.company || 'Professional Experience',
+      imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800',
+      tags: event.skills,
+      description: event.description,
+      date: event.date,
+      company: event.company,
+      location: event.location,
+    };
+    setSelectedEvent(projectDetails);
   };
 
   return (
@@ -103,7 +118,6 @@ export const TimelinePage = () => {
               {groupedEvents[Number(year)].map((event, eventIndex) => {
                 const Icon = getEventIcon(event.type);
                 const color = getEventColor(event.type);
-                const isExpanded = expandedEvent === event.id;
                 const isLeft = eventIndex % 2 === 0;
 
                 return (
@@ -122,7 +136,7 @@ export const TimelinePage = () => {
                     <div className={`w-full md:w-5/12 ml-20 md:ml-0 ${isLeft ? 'md:mr-auto md:pr-12' : 'md:ml-auto md:pl-12'}`}>
                       <motion.div
                         whileHover={{ scale: 1.02 }}
-                        onClick={() => setExpandedEvent(isExpanded ? null : event.id)}
+                        onClick={() => handleEventClick(event)}
                         className={`cursor-pointer bg-gray-900/50 backdrop-blur-sm border border-${color}-500/30 rounded-lg p-6 shadow-xl shadow-${color}-500/10 hover:shadow-${color}-500/30 hover:border-${color}-500/60 transition-all`}
                       >
                         {/* Header */}
@@ -161,41 +175,14 @@ export const TimelinePage = () => {
 
                         {/* Description Preview */}
                         <p className="text-gray-300 text-sm mb-4">
-                          {isExpanded ? event.description : `${event.description.substring(0, 100)}...`}
+                          {event.description.substring(0, 100)}...
                         </p>
 
-                        {/* Skills */}
-                        <AnimatePresence>
-                          {isExpanded && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.3 }}
-                              className="overflow-hidden"
-                            >
-                              <div className="pt-4 border-t border-gray-700">
-                                <p className="text-sm text-gray-400 mb-2 font-semibold">Key Skills:</p>
-                                <div className="flex flex-wrap gap-2">
-                                  {event.skills.map((skill) => (
-                                    <span
-                                      key={skill}
-                                      className={`px-3 py-1 bg-${color}-500/10 border border-${color}-500/30 rounded-full text-xs text-${color}-400`}
-                                    >
-                                      {skill}
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-
-                        {/* Read More Button */}
+                        {/* View Details Button */}
                         <button
-                          className={`mt-3 text-sm text-${color}-400 hover:text-${color}-300 font-semibold transition-colors`}
+                          className={`text-sm text-${color}-400 hover:text-${color}-300 font-semibold transition-colors`}
                         >
-                          {isExpanded ? 'Show Less' : 'Read More →'}
+                          View Details →
                         </button>
                       </motion.div>
                     </div>
@@ -206,6 +193,12 @@ export const TimelinePage = () => {
           ))}
         </div>
       </div>
+
+      {/* Event Details Modal */}
+      <ProjectModal
+        project={selectedEvent}
+        onClose={() => setSelectedEvent(null)}
+      />
     </motion.div>
   );
 };

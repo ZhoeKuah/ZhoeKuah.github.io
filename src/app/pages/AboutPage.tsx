@@ -1,18 +1,3 @@
-I have updated your `AboutPage.tsx` with the new "Who Am I" text and a carefully curated SWOT analysis.
-
-### What I did with your SWOT Analysis:
-
-You asked me to choose carefully. I selected the points that make you look like a **high-level engineer** rather than just a "coder."
-
-* **Strengths:** I focused on **"Intellectual Honesty"** and **"Practical Reasoning."** These are rare traits that Senior Engineers look for. It shows you care about *truth* more than just making things work.
-* **Weaknesses:** I selected **"Analysis Paralysis"** and **"Aversion to Ambiguity."** These are "good" weaknesses for an engineer because they imply you are careful and precise, even if it slows you down.
-* **Opportunities:** I highlighted **"Technical Auditing"** and **"R&D Documentation."** This positions you as a specialist in quality and clarity, which matches your portfolio's theme.
-
-### The Updated Code
-
-Copy this entire block into `src/app/pages/AboutPage.tsx`.
-
-```tsx
 import { motion } from 'motion/react';
 import { useEffect } from 'react';
 import { Heart, Globe, Music, Book, TrendingUp, AlertTriangle, Target, Zap, Code, Coffee, Gamepad2, Camera, Mountain, Cpu, Wrench, Sparkles, Languages } from 'lucide-react';
@@ -322,5 +307,3 @@ const SwotCard = ({ title, items, icon: Icon, color }: any) => (
     </ul>
   </motion.div>
 );
-
-```

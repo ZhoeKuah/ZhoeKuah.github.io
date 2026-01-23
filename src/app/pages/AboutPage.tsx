@@ -1,9 +1,23 @@
+I have updated your `AboutPage.tsx` with the new "Who Am I" text and a carefully curated SWOT analysis.
+
+### What I did with your SWOT Analysis:
+
+You asked me to choose carefully. I selected the points that make you look like a **high-level engineer** rather than just a "coder."
+
+* **Strengths:** I focused on **"Intellectual Honesty"** and **"Practical Reasoning."** These are rare traits that Senior Engineers look for. It shows you care about *truth* more than just making things work.
+* **Weaknesses:** I selected **"Analysis Paralysis"** and **"Aversion to Ambiguity."** These are "good" weaknesses for an engineer because they imply you are careful and precise, even if it slows you down.
+* **Opportunities:** I highlighted **"Technical Auditing"** and **"R&D Documentation."** This positions you as a specialist in quality and clarity, which matches your portfolio's theme.
+
+### The Updated Code
+
+Copy this entire block into `src/app/pages/AboutPage.tsx`.
+
+```tsx
 import { motion } from 'motion/react';
 import { useEffect } from 'react';
 import { Heart, Globe, Music, Book, TrendingUp, AlertTriangle, Target, Zap, Code, Coffee, Gamepad2, Camera, Mountain, Cpu, Wrench, Sparkles, Languages } from 'lucide-react';
 import { useAudio } from '../components/AudioContext';
 
-//
 // Helper Component: Circular Progress (Donut Chart) for Languages
 const LanguageRing = ({ language, level, color, delay }: { language: string, level: number, color: string, delay: number }) => {
   const radius = 30;
@@ -11,8 +25,16 @@ const LanguageRing = ({ language, level, color, delay }: { language: string, lev
   const strokeDashoffset = circumference - (level / 100) * circumference;
 
   const getColor = (c: string) => {
+    // Added support for new colors you introduced (red, green, etc)
     const colors: Record<string, string> = {
-      cyan: '#22d3ee', blue: '#3b82f6', purple: '#a855f7', pink: '#ec4899', emerald: '#10b981'
+      cyan: '#22d3ee', 
+      blue: '#3b82f6', 
+      purple: '#a855f7', 
+      pink: '#ec4899', 
+      emerald: '#10b981',
+      red: '#ef4444',
+      green: '#22c55e',
+      orange: '#f97316'
     };
     return colors[c] || '#fff';
   };
@@ -96,12 +118,29 @@ export const AboutPage = () => {
     { label: 'Detail-Oriented', icon: Target },
   ];
 
-  // ... (Keep existing SWOT and Developer Log data as is) ...
+  // CURATED SWOT DATA based on your request
   const swotData = {
-    strengths: ['Problem-solving', 'Full-stack Dev', 'Robotics & IoT', 'Quick Learner', 'Communication'],
-    weaknesses: ['Perfectionism', 'Overcommitting', 'Delegation', 'Hyper-focus'],
-    opportunities: ['AI/ML Demand', 'Remote Work', 'Open Source', 'Leadership', 'Mentorship'],
-    threats: ['Tech Velocity', 'Burnout Risk', 'Competition', 'Obsolescence'],
+    strengths: [
+      'Practical Reasoning over Raw Theory',
+      'Structured System Clarity',
+      'Intellectual Honesty & Limitation Analysis', 
+      'Evidence-Based Decision Making'
+    ],
+    weaknesses: [
+      'Analysis Paralysis (Over-Optimization)', 
+      'Aversion to Ambiguity', 
+      'Propensity for Detailed Justification'
+    ],
+    opportunities: [
+      'Complex Systems Engineering Roles', 
+      'Technical Consulting & Auditing', 
+      'R&D Documentation Bridging'
+    ],
+    threats: [
+      'Speed-over-Quality Environments', 
+      'Generic AI Content Saturation', 
+      'Devaluation of Deep Technical Writing'
+    ],
   };
 
   const developerLogs = [
@@ -118,7 +157,7 @@ export const AboutPage = () => {
       transition={{ duration: 0.5, ease: 'easeInOut' }}
       className="min-h-screen bg-gradient-to-b from-emerald-950/10 via-teal-950/20 to-black relative overflow-hidden"
     >
-      {/* Hero Section (Portrait & Bio) - Kept mostly same but cleaned up */}
+      {/* Hero Section (Portrait & Bio) */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div className="text-center mb-16" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }}>
@@ -147,10 +186,14 @@ export const AboutPage = () => {
             <motion.div className="lg:col-span-2 bg-gray-900/50 backdrop-blur-md border border-gray-800 rounded-2xl p-8 flex flex-col justify-center">
               <Heart className="w-10 h-10 text-emerald-400 mb-6" />
               <h2 className="text-3xl font-bold text-white mb-4">Who I Am</h2>
+              
+              {/* UPDATED BIO TEXT */}
               <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                I'm an engineer driven by the friction between hardware constraints and software possibilities. 
-                My work spans <span className="text-emerald-400">ROS2 robotics</span>, <span className="text-blue-400">IoT systems</span>, 
-                and modern web architecture.
+                I am an engineering professional who prioritizes <span className="text-emerald-400">structured reasoning</span> and practical application over raw theory. 
+                My approach is defined by a rigorous focus on the <span className="text-blue-400">"why"</span> behind system design—whether justifying a specific control logic or analyzing the limitations of a motion planner.
+              </p>
+              <p className="text-gray-300 text-lg leading-relaxed mb-6">
+                I believe technical documentation should be human and accessible, bridging the gap between academic standards and real-world system challenges.
               </p>
               
               {/* Traits Grid (Compact) */}
@@ -210,27 +253,27 @@ export const AboutPage = () => {
         </div>
       </section>
 
-      {/* SWOT Matrix (Kept Clean) */}
+      {/* SWOT Matrix */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-white mb-2">SWOT Analysis</h2>
-            <p className="text-gray-400">Strategic self-assessment</p>
+            <p className="text-gray-400">Strategic self-assessment & "Sparring Partner" Rigor</p>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-6">
-               <SwotCard title="Strengths" items={swotData.strengths} icon={TrendingUp} color="emerald" />
-               <SwotCard title="Weaknesses" items={swotData.weaknesses} icon={AlertTriangle} color="red" />
+               <SwotCard title="Strengths (Internal)" items={swotData.strengths} icon={TrendingUp} color="emerald" />
+               <SwotCard title="Weaknesses (Internal)" items={swotData.weaknesses} icon={AlertTriangle} color="red" />
             </div>
             <div className="space-y-6">
-               <SwotCard title="Opportunities" items={swotData.opportunities} icon={Target} color="blue" />
-               <SwotCard title="Threats" items={swotData.threats} icon={Zap} color="yellow" />
+               <SwotCard title="Opportunities (External)" items={swotData.opportunities} icon={Target} color="blue" />
+               <SwotCard title="Threats (External)" items={swotData.threats} icon={Zap} color="yellow" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Developer Log (Kept Clean) */}
+      {/* Developer Log */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-white mb-12 text-center">Developer's Log</h2>
@@ -279,3 +322,5 @@ const SwotCard = ({ title, items, icon: Icon, color }: any) => (
     </ul>
   </motion.div>
 );
+
+```

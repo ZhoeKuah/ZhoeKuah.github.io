@@ -125,14 +125,15 @@
   }
 
   /* Hide default cursor on desktop only (not touch devices) */
-  @media (hover: hover) and (pointer: fine) {
-    *, *::before, *::after {
-      cursor: none !important;
+  @media (max-width: 768px) {
+    body {
+      cursor: auto;
     }
   }
 
   body {
     @apply bg-background text-foreground;
+    cursor: none;
   }
 
   /**

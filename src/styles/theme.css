@@ -120,14 +120,15 @@
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+  /* Hide default cursor everywhere */
+  body, button, a, [role="button"] {
+    cursor: none !important;
   }
 
   /* Hide default cursor on desktop only (not touch devices) */
   @media (max-width: 768px) {
-    body {
-      cursor: auto;
+    body, button, a, [role="button"] {
+      cursor: auto !important;
     }
   }
 

@@ -83,10 +83,10 @@ export const AboutPage = () => {
   ];
 
   const languages = [
+    { name: 'Mandarin', level: 100, color: 'red' },
     { name: 'English', level: 100, color: 'cyan' },
-    { name: 'Spanish', level: 85, color: 'blue' },
-    { name: 'Mandarin', level: 60, color: 'purple' },
-    { name: 'Japanese', level: 35, color: 'pink' },
+    { name: 'Malay', level: 60, color: 'green' },
+    { name: 'Japanese', level: 30, color: 'pink' },
   ];
 
   const traits = [
@@ -105,9 +105,9 @@ export const AboutPage = () => {
   };
 
   const developerLogs = [
-    { year: 2025, summary: 'AI Integration & Leadership', highlights: ['ML in Production', 'Team Mentorship', 'Code Quality'] },
-    { year: 2024, summary: 'Robotics Deep Dive', highlights: ['ROS2 Mastery', 'Open Source Pubs', 'Industry Standards'] },
-    { year: 2023, summary: 'Research & Academia', highlights: ['Master\'s Degree', 'IEEE Papers', 'Comp Winner'] },
+    { year: 2025, summary: 'AI Integration & Leadership', highlights: ['Masters Degree', 'IEEE Papers', 'Github User'] },
+    { year: 2024, summary: 'Robotics Deep Dive', highlights: ['Internship', 'Industry Standards'] },
+    { year: 2023, summary: 'Research & Academia', highlights: ['Competition Attendent', 'Project Maniac'] },
   ];
 
   return (

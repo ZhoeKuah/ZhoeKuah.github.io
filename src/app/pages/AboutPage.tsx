@@ -1,7 +1,65 @@
 import { motion } from 'motion/react';
 import { useEffect } from 'react';
-import { Heart, Globe, Music, Book, TrendingUp, AlertTriangle, Target, Zap, Code, Coffee, Gamepad2, Camera, Mountain, Cpu, Wrench, Sparkles } from 'lucide-react';
+import { Heart, Globe, Music, Book, TrendingUp, AlertTriangle, Target, Zap, Code, Coffee, Gamepad2, Camera, Mountain, Cpu, Wrench, Sparkles, Languages } from 'lucide-react';
 import { useAudio } from '../components/AudioContext';
+
+//
+// Helper Component: Circular Progress (Donut Chart) for Languages
+const LanguageRing = ({ language, level, color, delay }: { language: string, level: number, color: string, delay: number }) => {
+  const radius = 30;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (level / 100) * circumference;
+
+  const getColor = (c: string) => {
+    const colors: Record<string, string> = {
+      cyan: '#22d3ee', blue: '#3b82f6', purple: '#a855f7', pink: '#ec4899', emerald: '#10b981'
+    };
+    return colors[c] || '#fff';
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <div className="relative w-24 h-24 flex items-center justify-center">
+        {/* Background Circle */}
+        <svg className="w-full h-full transform -rotate-90">
+          <circle cx="48" cy="48" r={radius} stroke="#1f2937" strokeWidth="6" fill="transparent" />
+          {/* Progress Circle */}
+          <motion.circle
+            cx="48" cy="48" r={radius}
+            stroke={getColor(color)}
+            strokeWidth="6"
+            fill="transparent"
+            strokeDasharray={circumference}
+            initial={{ strokeDashoffset: circumference }}
+            whileInView={{ strokeDashoffset }}
+            viewport={{ once: true }} // Only animate once
+            transition={{ duration: 1.5, delay, ease: "easeOut" }}
+            strokeLinecap="round"
+          />
+        </svg>
+        <span className="absolute text-xl font-bold text-white">{level}%</span>
+      </div>
+      <span className="text-sm font-medium text-gray-300">{language}</span>
+    </div>
+  );
+};
+
+// Helper Component: Hexagon Card for Interests
+const InterestHex = ({ icon: Icon, label, color, index }: { icon: any, label: string, color: string, index: number }) => (
+  <motion.div
+    initial={{ scale: 0, opacity: 0 }}
+    whileInView={{ scale: 1, opacity: 1 }}
+    viewport={{ once: true }}
+    transition={{ delay: index * 0.05, type: 'spring' }}
+    whileHover={{ scale: 1.1, rotate: 5 }}
+    className="flex flex-col items-center justify-center p-4 bg-gray-900/50 border border-gray-700 hover:border-emerald-500/50 rounded-2xl transition-all group"
+  >
+    <div className={`p-3 rounded-xl bg-gray-800 group-hover:bg-${color}-500/20 transition-colors mb-2`}>
+      <Icon className={`w-6 h-6 text-gray-400 group-hover:text-${color}-400 transition-colors`} />
+    </div>
+    <span className="text-xs text-gray-400 font-medium text-center">{label}</span>
+  </motion.div>
+);
 
 export const AboutPage = () => {
   const { changeTrack } = useAudio();
@@ -10,17 +68,18 @@ export const AboutPage = () => {
     changeTrack('about');
   }, [changeTrack]);
 
+  // Combined Tech & Personal Interests
   const interests = [
-    { icon: Music, label: 'Electronic Music', color: 'purple', level: 95 },
-    { icon: Book, label: 'Sci-Fi Novels', color: 'pink', level: 80 },
-    { icon: Globe, label: 'Travel & Culture', color: 'cyan', level: 75 },
-    { icon: Zap, label: 'Hackathons', color: 'yellow', level: 90 },
-    { icon: Code, label: 'Open Source', color: 'emerald', level: 100 },
-    { icon: Coffee, label: 'Coffee Brewing', color: 'orange', level: 70 },
-    { icon: Gamepad2, label: 'Gaming', color: 'green', level: 85 },
-    { icon: Camera, label: 'Photography', color: 'red', level: 65 },
-    { icon: Mountain, label: 'Hiking', color: 'teal', level: 60 },
-    { icon: Cpu, label: 'Hardware Tinkering', color: 'indigo', level: 95 },
+    { icon: Cpu, label: 'Robotics', color: 'cyan' },
+    { icon: Code, label: 'Open Source', color: 'emerald' },
+    { icon: Zap, label: 'Hackathons', color: 'yellow' },
+    { icon: Book, label: 'Sci-Fi Lit', color: 'pink' },
+    { icon: Music, label: 'Synthwave', color: 'purple' },
+    { icon: Coffee, label: 'Pour Over', color: 'orange' },
+    { icon: Gamepad2, label: 'Gaming', color: 'green' },
+    { icon: Mountain, label: 'Hiking', color: 'teal' },
+    { icon: Globe, label: 'Travel', color: 'blue' },
+    { icon: Camera, label: 'Photo', color: 'red' },
   ];
 
   const languages = [
@@ -37,63 +96,18 @@ export const AboutPage = () => {
     { label: 'Detail-Oriented', icon: Target },
   ];
 
+  // ... (Keep existing SWOT and Developer Log data as is) ...
   const swotData = {
-    strengths: [
-      'Strong problem-solving abilities',
-      'Full-stack development expertise',
-      'Robotics & IoT experience',
-      'Quick learner & adaptable',
-      'Excellent communication skills',
-    ],
-    weaknesses: [
-      'Perfectionist tendencies',
-      'Sometimes overcommit to projects',
-      'Need to improve delegation',
-      'Can get too detail-oriented',
-    ],
-    opportunities: [
-      'Growing AI/ML industry demand',
-      'Remote work possibilities',
-      'Open source contributions',
-      'Technical leadership roles',
-      'Speaking & mentorship',
-    ],
-    threats: [
-      'Rapidly changing technology',
-      'Work-life balance challenges',
-      'Market competition',
-      'Skill obsolescence risk',
-    ],
+    strengths: ['Problem-solving', 'Full-stack Dev', 'Robotics & IoT', 'Quick Learner', 'Communication'],
+    weaknesses: ['Perfectionism', 'Overcommitting', 'Delegation', 'Hyper-focus'],
+    opportunities: ['AI/ML Demand', 'Remote Work', 'Open Source', 'Leadership', 'Mentorship'],
+    threats: ['Tech Velocity', 'Burnout Risk', 'Competition', 'Obsolescence'],
   };
 
   const developerLogs = [
-    {
-      year: 2025,
-      summary: 'Embracing AI-driven development and expanding leadership skills',
-      highlights: [
-        'Integrated ML models into production systems',
-        'Mentored junior developers',
-        'Improved code review practices',
-      ],
-    },
-    {
-      year: 2024,
-      summary: 'Deep dive into robotics and real-time systems',
-      highlights: [
-        'Mastered ROS2 ecosystem',
-        'Published open source projects',
-        'Contributed to industry standards',
-      ],
-    },
-    {
-      year: 2023,
-      summary: 'Academic excellence and research contributions',
-      highlights: [
-        'Completed Master\'s degree',
-        'Published 3 research papers',
-        'Won robotics competition',
-      ],
-    },
+    { year: 2025, summary: 'AI Integration & Leadership', highlights: ['ML in Production', 'Team Mentorship', 'Code Quality'] },
+    { year: 2024, summary: 'Robotics Deep Dive', highlights: ['ROS2 Mastery', 'Open Source Pubs', 'Industry Standards'] },
+    { year: 2023, summary: 'Research & Academia', highlights: ['Master\'s Degree', 'IEEE Papers', 'Comp Winner'] },
   ];
 
   return (
@@ -104,172 +118,91 @@ export const AboutPage = () => {
       transition={{ duration: 0.5, ease: 'easeInOut' }}
       className="min-h-screen bg-gradient-to-b from-emerald-950/10 via-teal-950/20 to-black relative overflow-hidden"
     >
-      {/* Hero Section with Portrait */}
+      {/* Hero Section (Portrait & Bio) - Kept mostly same but cleaned up */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
+          <motion.div className="text-center mb-16" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }}>
             <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
               The Human Behind the Code
             </h1>
             <p className="text-gray-400 text-xl max-w-3xl mx-auto">
-              More than just lines of code and circuits - I'm passionate about creating technology that makes a difference
+              Robotics Engineer. Open Source Advocate. Coffee Enthusiast.
             </p>
           </motion.div>
 
-          {/* Portrait and Bio Section */}
-          <div className="grid lg:grid-cols-3 gap-8 mb-16">
-            {/* Portrait */}
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.6 }}
-              className="lg:col-span-1"
-            >
+          <div className="grid lg:grid-cols-3 gap-8 mb-20">
+             {/* Portrait */}
+             <motion.div className="lg:col-span-1" initial={{ opacity:0, scale:0.9 }} whileInView={{ opacity:1, scale:1 }}>
               <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-500"></div>
-                <div className="relative">
-                  <img
-                    src="https://images.unsplash.com/photo-1747811854184-95f49a6d024d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdCUyMGVuZ2luZWVyfGVufDF8fHx8MTc2ODI3NDEyNXww&ixlib=rb-4.1.0&q=80&w=1080"
-                    alt="Professional Portrait"
-                    className="w-full aspect-[3/4] object-cover rounded-2xl"
+                <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl blur opacity-40 group-hover:opacity-75 transition duration-500"></div>
+                <img
+                    src="https://images.unsplash.com/photo-1747811854184-95f49a6d024d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080"
+                    alt="Portrait"
+                    className="relative w-full aspect-[3/4] object-cover rounded-2xl shadow-2xl"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent rounded-2xl"></div>
-                </div>
               </div>
             </motion.div>
 
-            {/* Bio */}
-            <motion.div
-              initial={{ x: -30, opacity: 0 }}
-              whileInView={{ x: 0, opacity: 1 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.6 }}
-              className="lg:col-span-2 bg-gradient-to-br from-teal-900/30 to-emerald-900/30 backdrop-blur-sm border border-emerald-500/30 rounded-xl p-8"
-            >
-              <Heart className="w-12 h-12 text-emerald-400 mb-4" />
+            {/* Bio Card */}
+            <motion.div className="lg:col-span-2 bg-gray-900/50 backdrop-blur-md border border-gray-800 rounded-2xl p-8 flex flex-col justify-center">
+              <Heart className="w-10 h-10 text-emerald-400 mb-6" />
               <h2 className="text-3xl font-bold text-white mb-4">Who I Am</h2>
-              <p className="text-gray-300 mb-4 text-lg">
-                I'm an engineer at heart, driven by curiosity and a passion for solving complex problems. 
-                My journey spans robotics, software development, and IoT, but what truly excites me is 
-                the intersection where hardware meets intelligent software.
+              <p className="text-gray-300 text-lg leading-relaxed mb-6">
+                I'm an engineer driven by the friction between hardware constraints and software possibilities. 
+                My work spans <span className="text-emerald-400">ROS2 robotics</span>, <span className="text-blue-400">IoT systems</span>, 
+                and modern web architecture.
               </p>
-              <p className="text-gray-300 mb-6 text-lg">
-                When I'm not coding or tinkering with robots, you'll find me exploring new technologies, 
-                contributing to open source, or mentoring aspiring engineers.
-              </p>
-
-              {/* Engineer Traits */}
-              <div className="grid grid-cols-2 gap-3 mt-6">
-                {traits.map((trait, index) => {
-                  const Icon = trait.icon;
-                  return (
-                    <motion.div
-                      key={trait.label}
-                      initial={{ scale: 0 }}
-                      whileInView={{ scale: 1 }}
-                      viewport={{ once: false }}
-                      transition={{ delay: index * 0.1, type: 'spring', stiffness: 200 }}
-                      className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-3 hover:border-emerald-400 hover:bg-emerald-500/20 transition-all cursor-pointer"
-                    >
-                      <Icon className="w-5 h-5 text-emerald-400" />
-                      <span className="text-sm text-gray-300 font-medium">{trait.label}</span>
-                    </motion.div>
-                  );
-                })}
+              
+              {/* Traits Grid (Compact) */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-auto">
+                {traits.map((trait, i) => (
+                  <div key={i} className="flex flex-col items-center p-3 bg-gray-800/50 rounded-lg border border-gray-700/50">
+                    <trait.icon className="w-6 h-6 text-emerald-400 mb-2" />
+                    <span className="text-xs text-gray-400 text-center font-medium">{trait.label}</span>
+                  </div>
+                ))}
               </div>
             </motion.div>
           </div>
 
-          {/* Interests and Languages Grid */}
-          <div className="grid lg:grid-cols-2 gap-8 mb-16">
-            {/* Interests with Level Bars */}
-            <motion.div
-              initial={{ x: -30, opacity: 0 }}
+          {/* NEW SECTION: The "Command Center" Layout */}
+          <div className="grid lg:grid-cols-12 gap-8 mb-20">
+            
+            {/* 1. Languages (The Gauges) - Spans 4 columns */}
+            <motion.div 
+              className="lg:col-span-4 bg-gray-900/40 border border-gray-800 rounded-2xl p-8 flex flex-col items-center"
+              initial={{ x: -50, opacity: 0 }}
               whileInView={{ x: 0, opacity: 1 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.6 }}
-              className="bg-gradient-to-br from-purple-900/30 to-pink-900/30 backdrop-blur-sm border border-purple-500/30 rounded-xl p-8"
+              viewport={{ once: true }}
             >
-              <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                <Sparkles className="w-6 h-6 text-purple-400" />
-                Interests & Hobbies
-              </h3>
-              <div className="space-y-4">
-                {interests.map((interest, index) => {
-                  const Icon = interest.icon;
-                  return (
-                    <motion.div
-                      key={interest.label}
-                      initial={{ x: -50, opacity: 0 }}
-                      whileInView={{ x: 0, opacity: 1 }}
-                      viewport={{ once: false }}
-                      transition={{ delay: index * 0.05, duration: 0.5 }}
-                      whileHover={{ scale: 1.02, x: 5 }}
-                      className="cursor-pointer"
-                    >
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className={`p-2 bg-${interest.color}-500/20 border border-${interest.color}-500/40 rounded-lg`}>
-                          <Icon className={`w-4 h-4 text-${interest.color}-400`} />
-                        </div>
-                        <span className="text-sm text-gray-300 font-medium flex-1">{interest.label}</span>
-                        <span className={`text-xs text-${interest.color}-400 font-semibold`}>{interest.level}%</span>
-                      </div>
-                      <div className="h-2 bg-gray-800 rounded-full overflow-hidden border border-gray-700 ml-[52px]">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          whileInView={{ width: `${interest.level}%` }}
-                          viewport={{ once: false }}
-                          transition={{ delay: index * 0.05 + 0.2, duration: 1, ease: 'easeOut' }}
-                          className={`h-full bg-gradient-to-r from-${interest.color}-600 to-${interest.color}-400 rounded-full`}
-                        />
-                      </div>
-                    </motion.div>
-                  );
-                })}
+              <div className="flex items-center gap-3 mb-8 w-full">
+                <div className="p-2 bg-blue-500/10 rounded-lg"><Languages className="w-6 h-6 text-blue-400" /></div>
+                <h3 className="text-xl font-bold text-white">Communication</h3>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-x-4 gap-y-8">
+                {languages.map((lang, i) => (
+                  <LanguageRing key={lang.name} language={lang.name} level={lang.level} color={lang.color} delay={i * 0.1} />
+                ))}
               </div>
             </motion.div>
 
-            {/* Languages with Progress Bars */}
-            <motion.div
-              initial={{ x: 30, opacity: 0 }}
+            {/* 2. Interests (The Grid) - Spans 8 columns */}
+            <motion.div 
+              className="lg:col-span-8 bg-gray-900/40 border border-gray-800 rounded-2xl p-8"
+              initial={{ x: 50, opacity: 0 }}
               whileInView={{ x: 0, opacity: 1 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.6 }}
-              className="bg-gradient-to-br from-emerald-900/30 to-teal-900/30 backdrop-blur-sm border border-emerald-500/30 rounded-xl p-8"
+              viewport={{ once: true }}
             >
-              <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                <Globe className="w-6 h-6 text-emerald-400" />
-                Languages
-              </h3>
-              <div className="space-y-6">
-                {languages.map((lang, index) => (
-                  <motion.div
-                    key={lang.name}
-                    initial={{ x: -50, opacity: 0 }}
-                    whileInView={{ x: 0, opacity: 1 }}
-                    viewport={{ once: false }}
-                    transition={{ delay: index * 0.1, duration: 0.5 }}
-                  >
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-gray-300 font-medium">{lang.name}</span>
-                      <span className={`text-${lang.color}-400 text-sm font-semibold`}>{lang.level}%</span>
-                    </div>
-                    <div className="h-3 bg-gray-800 rounded-full overflow-hidden border border-gray-700">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${lang.level}%` }}
-                        viewport={{ once: false }}
-                        transition={{ delay: index * 0.1 + 0.2, duration: 1, ease: 'easeOut' }}
-                        className={`h-full bg-gradient-to-r from-${lang.color}-500 to-${lang.color}-400 rounded-full shadow-lg shadow-${lang.color}-500/50`}
-                      />
-                    </div>
-                  </motion.div>
+              <div className="flex items-center gap-3 mb-8">
+                <div className="p-2 bg-purple-500/10 rounded-lg"><Sparkles className="w-6 h-6 text-purple-400" /></div>
+                <h3 className="text-xl font-bold text-white">Interests & Hobbies</h3>
+              </div>
+
+              {/* The Hex Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {interests.map((interest, i) => (
+                  <InterestHex key={i} {...interest} index={i} />
                 ))}
               </div>
             </motion.div>
@@ -277,158 +210,48 @@ export const AboutPage = () => {
         </div>
       </section>
 
-      {/* SWOT Matrix */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black/50">
+      {/* SWOT Matrix (Kept Clean) */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black/30">
         <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl font-bold mb-4 text-white">
-              SWOT Analysis
-            </h2>
-            <p className="text-gray-400 text-lg">
-              Self-awareness drives continuous improvement
-            </p>
-          </motion.div>
-
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-2">SWOT Analysis</h2>
+            <p className="text-gray-400">Strategic self-assessment</p>
+          </div>
           <div className="grid md:grid-cols-2 gap-6">
-            {/* Strengths */}
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.5 }}
-              className="bg-emerald-900/20 border-2 border-emerald-500/50 rounded-xl p-6 hover:border-emerald-400 transition-all"
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <TrendingUp className="w-6 h-6 text-emerald-400" />
-                <h3 className="text-2xl font-bold text-emerald-400">Strengths</h3>
-              </div>
-              <ul className="space-y-2">
-                {swotData.strengths.map((item, index) => (
-                  <li key={index} className="flex items-start gap-2 text-gray-300">
-                    <span className="text-emerald-400 mt-1">✓</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            {/* Weaknesses */}
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="bg-red-900/20 border-2 border-red-500/50 rounded-xl p-6 hover:border-red-400 transition-all"
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <AlertTriangle className="w-6 h-6 text-red-400" />
-                <h3 className="text-2xl font-bold text-red-400">Weaknesses</h3>
-              </div>
-              <ul className="space-y-2">
-                {swotData.weaknesses.map((item, index) => (
-                  <li key={index} className="flex items-start gap-2 text-gray-300">
-                    <span className="text-red-400 mt-1">•</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            {/* Opportunities */}
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-blue-900/20 border-2 border-blue-500/50 rounded-xl p-6 hover:border-blue-400 transition-all"
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <Target className="w-6 h-6 text-blue-400" />
-                <h3 className="text-2xl font-bold text-blue-400">Opportunities</h3>
-              </div>
-              <ul className="space-y-2">
-                {swotData.opportunities.map((item, index) => (
-                  <li key={index} className="flex items-start gap-2 text-gray-300">
-                    <span className="text-blue-400 mt-1">→</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            {/* Threats */}
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="bg-yellow-900/20 border-2 border-yellow-500/50 rounded-xl p-6 hover:border-yellow-400 transition-all"
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <Zap className="w-6 h-6 text-yellow-400" />
-                <h3 className="text-2xl font-bold text-yellow-400">Threats</h3>
-              </div>
-              <ul className="space-y-2">
-                {swotData.threats.map((item, index) => (
-                  <li key={index} className="flex items-start gap-2 text-gray-300">
-                    <span className="text-yellow-400 mt-1">!</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
+            <div className="space-y-6">
+               <SwotCard title="Strengths" items={swotData.strengths} icon={TrendingUp} color="emerald" />
+               <SwotCard title="Weaknesses" items={swotData.weaknesses} icon={AlertTriangle} color="red" />
+            </div>
+            <div className="space-y-6">
+               <SwotCard title="Opportunities" items={swotData.opportunities} icon={Target} color="blue" />
+               <SwotCard title="Threats" items={swotData.threats} icon={Zap} color="yellow" />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Developer's Log */}
+      {/* Developer Log (Kept Clean) */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-              Developer's Log
-            </h2>
-            <p className="text-gray-400 text-lg">
-              Annual reflections on growth and learning
-            </p>
-          </motion.div>
-
-          <div className="space-y-6">
-            {developerLogs.map((log, index) => (
-              <motion.div
-                key={log.year}
-                initial={{ x: index % 2 === 0 ? -30 : 30, opacity: 0 }}
-                whileInView={{ x: 0, opacity: 1 }}
-                viewport={{ once: false, amount: 0.3 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-gradient-to-r from-emerald-900/20 to-teal-900/20 backdrop-blur-sm border border-emerald-500/30 rounded-xl p-6 hover:border-emerald-400 transition-all"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-3xl font-bold text-emerald-400">{log.year}</h3>
-                  <Book className="w-6 h-6 text-emerald-400" />
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-white mb-12 text-center">Developer's Log</h2>
+          <div className="relative border-l-2 border-gray-800 ml-4 space-y-12">
+            {developerLogs.map((log, i) => (
+              <div key={i} className="relative pl-8">
+                <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-black border-2 border-emerald-500"></div>
+                <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-emerald-500/30 transition-colors">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-2xl font-bold text-emerald-400">{log.year}</h3>
+                  </div>
+                  <h4 className="text-lg text-white font-medium mb-3">{log.summary}</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {log.highlights.map((h, j) => (
+                      <span key={j} className="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-full border border-emerald-500/20">
+                        {h}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <p className="text-lg text-white mb-4">{log.summary}</p>
-                <div className="space-y-2">
-                  {log.highlights.map((highlight, i) => (
-                    <div key={i} className="flex items-start gap-2">
-                      <span className="text-emerald-400 mt-1">▸</span>
-                      <span className="text-gray-300">{highlight}</span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -436,3 +259,23 @@ export const AboutPage = () => {
     </motion.div>
   );
 };
+
+// Small Helper for SWOT to reduce code duplication
+const SwotCard = ({ title, items, icon: Icon, color }: any) => (
+  <motion.div 
+    whileHover={{ y: -5 }}
+    className={`bg-gray-900/30 border border-${color}-500/30 p-6 rounded-xl hover:border-${color}-500/60 transition-colors`}
+  >
+    <div className="flex items-center gap-3 mb-4">
+      <Icon className={`w-5 h-5 text-${color}-400`} />
+      <h3 className={`text-xl font-bold text-${color}-400`}>{title}</h3>
+    </div>
+    <ul className="space-y-2">
+      {items.map((item: string, i: number) => (
+        <li key={i} className="text-gray-400 text-sm flex items-start gap-2">
+          <span className={`text-${color}-500 mt-1`}>•</span> {item}
+        </li>
+      ))}
+    </ul>
+  </motion.div>
+);

@@ -3,6 +3,34 @@ import { useEffect } from 'react';
 import { Heart, Globe, Music, Book, TrendingUp, AlertTriangle, Target, Zap, Code, Coffee, Gamepad2, Camera, Mountain, Cpu, Wrench, Sparkles, Languages } from 'lucide-react';
 import { useAudio } from '../components/AudioContext';
 
+// Helper: Color Lookup to fix Tailwind "White Border" bug
+const colorStyles: Record<string, { border: string; hover: string; text: string; bullet: string }> = {
+  emerald: {
+    border: 'border-emerald-500/30',
+    hover: 'hover:border-emerald-500/60',
+    text: 'text-emerald-400',
+    bullet: 'text-emerald-500',
+  },
+  red: {
+    border: 'border-red-500/30',
+    hover: 'hover:border-red-500/60',
+    text: 'text-red-400',
+    bullet: 'text-red-500',
+  },
+  blue: {
+    border: 'border-blue-500/30',
+    hover: 'hover:border-blue-500/60',
+    text: 'text-blue-400',
+    bullet: 'text-blue-500',
+  },
+  yellow: {
+    border: 'border-yellow-500/30',
+    hover: 'hover:border-yellow-500/60',
+    text: 'text-yellow-400',
+    bullet: 'text-yellow-500',
+  },
+};
+
 // Helper Component: Circular Progress (Donut Chart) for Languages
 const LanguageRing = ({ language, level, color, delay }: { language: string, level: number, color: string, delay: number }) => {
   const radius = 30;
@@ -10,7 +38,6 @@ const LanguageRing = ({ language, level, color, delay }: { language: string, lev
   const strokeDashoffset = circumference - (level / 100) * circumference;
 
   const getColor = (c: string) => {
-    // Added support for new colors you introduced (red, green, etc)
     const colors: Record<string, string> = {
       cyan: '#22d3ee', 
       blue: '#3b82f6', 
@@ -39,7 +66,7 @@ const LanguageRing = ({ language, level, color, delay }: { language: string, lev
             strokeDasharray={circumference}
             initial={{ strokeDashoffset: circumference }}
             whileInView={{ strokeDashoffset }}
-            viewport={{ once: true }} // Only animate once
+            viewport={{ once: true }}
             transition={{ duration: 1.5, delay, ease: "easeOut" }}
             strokeLinecap="round"
           />
@@ -103,7 +130,6 @@ export const AboutPage = () => {
     { label: 'Detail-Oriented', icon: Target },
   ];
 
-  // CURATED SWOT DATA based on your request
   const swotData = {
     strengths: [
       'Practical Reasoning over Raw Theory',
@@ -129,9 +155,9 @@ export const AboutPage = () => {
   };
 
   const developerLogs = [
-    { year: 2025, summary: 'AI Integration & Leadership', highlights: ['Masters Degree', 'IEEE Papers', 'Github User'] },
-    { year: 2024, summary: 'Robotics Deep Dive', highlights: ['Internship', 'Industry Standards'] },
-    { year: 2023, summary: 'Research & Academia', highlights: ['Competition Attendent', 'Project Maniac'] },
+    { year: 2025, summary: 'AI Integration & Leadership', highlights: ['Masters Degree', 'IEEE Papers', 'Github User', 'Final Year Project'] },
+    { year: 2024, summary: 'Industry Deep Dive', highlights: ['Internship', 'Industry Standards', 'Robotic Arm', 'Machine Vision & Intelligence'] },
+    { year: 2023, summary: 'Projects & Academic', highlights: ['Competition Attendent', 'Project Maniac'] },
   ];
 
   return (
@@ -172,7 +198,6 @@ export const AboutPage = () => {
               <Heart className="w-10 h-10 text-emerald-400 mb-6" />
               <h2 className="text-3xl font-bold text-white mb-4">Who I Am</h2>
               
-              {/* UPDATED BIO TEXT */}
               <p className="text-gray-300 text-lg leading-relaxed mb-6">
                 I am an engineering professional who prioritizes <span className="text-emerald-400">structured reasoning</span> and practical application over raw theory. 
                 My approach is defined by a rigorous focus on the <span className="text-blue-400">"why"</span> behind system design—whether justifying a specific control logic or analyzing the limitations of a motion planner.
@@ -181,7 +206,7 @@ export const AboutPage = () => {
                 I believe technical documentation should be human and accessible, bridging the gap between academic standards and real-world system challenges.
               </p>
               
-              {/* Traits Grid (Compact) */}
+              {/* Traits Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-auto">
                 {traits.map((trait, i) => (
                   <div key={i} className="flex flex-col items-center p-3 bg-gray-800/50 rounded-lg border border-gray-700/50">
@@ -193,10 +218,9 @@ export const AboutPage = () => {
             </motion.div>
           </div>
 
-          {/* NEW SECTION: The "Command Center" Layout */}
+          {/* Interests & Languages Grid */}
           <div className="grid lg:grid-cols-12 gap-8 mb-20">
-            
-            {/* 1. Languages (The Gauges) - Spans 4 columns */}
+            {/* Languages - Spans 4 columns */}
             <motion.div 
               className="lg:col-span-4 bg-gray-900/40 border border-gray-800 rounded-2xl p-8 flex flex-col items-center"
               initial={{ x: -50, opacity: 0 }}
@@ -215,7 +239,7 @@ export const AboutPage = () => {
               </div>
             </motion.div>
 
-            {/* 2. Interests (The Grid) - Spans 8 columns */}
+            {/* Interests - Spans 8 columns */}
             <motion.div 
               className="lg:col-span-8 bg-gray-900/40 border border-gray-800 rounded-2xl p-8"
               initial={{ x: 50, opacity: 0 }}
@@ -227,7 +251,6 @@ export const AboutPage = () => {
                 <h3 className="text-xl font-bold text-white">Interests & Hobbies</h3>
               </div>
 
-              {/* The Hex Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {interests.map((interest, i) => (
                   <InterestHex key={i} {...interest} index={i} />
@@ -288,22 +311,29 @@ export const AboutPage = () => {
   );
 };
 
-// Small Helper for SWOT to reduce code duplication
-const SwotCard = ({ title, items, icon: Icon, color }: any) => (
-  <motion.div 
-    whileHover={{ y: -5 }}
-    className={`bg-gray-900/30 border border-${color}-500/30 p-6 rounded-xl hover:border-${color}-500/60 transition-colors`}
-  >
-    <div className="flex items-center gap-3 mb-4">
-      <Icon className={`w-5 h-5 text-${color}-400`} />
-      <h3 className={`text-xl font-bold text-${color}-400`}>{title}</h3>
-    </div>
-    <ul className="space-y-2">
-      {items.map((item: string, i: number) => (
-        <li key={i} className="text-gray-400 text-sm flex items-start gap-2">
-          <span className={`text-${color}-500 mt-1`}>•</span> {item}
-        </li>
-      ))}
-    </ul>
-  </motion.div>
-);
+// SwotCard with FIX for dynamic Tailwind classes and Alignment (h-full)
+const SwotCard = ({ title, items, icon: Icon, color }: any) => {
+  // Use the lookup to get the valid Tailwind class
+  const style = colorStyles[color as keyof typeof colorStyles] || colorStyles.emerald;
+
+  return (
+    <motion.div 
+      whileHover={{ y: -5 }}
+      // ADDED: h-full to fix alignment, used lookup 'style.border' to fix white border
+      className={`h-full bg-gray-900/30 border ${style.border} p-6 rounded-xl ${style.hover} transition-colors flex flex-col`}
+    >
+      <div className="flex items-center gap-3 mb-4">
+        <Icon className={`w-5 h-5 ${style.text}`} />
+        <h3 className={`text-xl font-bold ${style.text}`}>{title}</h3>
+      </div>
+      <ul className="space-y-3 flex-1"> {/* flex-1 pushes content to fill space if needed */}
+        {items.map((item: string, i: number) => (
+          <li key={i} className="text-gray-400 text-sm flex items-start gap-2">
+            <span className={`${style.bullet} mt-1.5 shrink-0`}>•</span> 
+            <span className="leading-relaxed">{item}</span>
+          </li>
+        ))}
+      </ul>
+    </motion.div>
+  );
+};

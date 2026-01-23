@@ -15,6 +15,14 @@ export const TimelinePage = () => {
     changeTrack('timeline');
   }, [changeTrack]);
 
+  // HELPER: Smooth scroll function
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const getEventIcon = (type: TimelineEvent['type']) => {
     switch (type) {
       case 'work':
@@ -79,16 +87,16 @@ export const TimelinePage = () => {
             projects, achievements, and learning experiences from 2020 to present.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            {['2025', '2024', '2023', '2022', '2021', '2020'].map((year) => (
-              <motion.a
+            {years.map((year) => (
+              <motion.button
                 key={year}
-                href={`#${year}`}
+                onClick={() => scrollToSection(year)}
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-4 py-2 bg-blue-500/20 border border-blue-500/50 rounded-lg text-blue-400 hover:border-blue-400 hover:bg-blue-500/30 transition-all"
+                className="px-4 py-2 bg-blue-500/20 border border-blue-500/50 rounded-lg text-blue-400 hover:border-blue-400 hover:bg-blue-500/30 transition-all cursor-pointer"
               >
                 {year}
-              </motion.a>
+              </motion.button>
             ))}
           </div>
         </motion.div>

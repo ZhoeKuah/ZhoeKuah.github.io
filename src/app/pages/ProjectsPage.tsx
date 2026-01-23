@@ -14,11 +14,25 @@ export const ProjectsPage = () => {
     changeTrack('projects');
   }, [changeTrack]);
 
+  // HELPER: Smooth scroll function
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const hardwareProjects: ProjectDetails[] = [
     {
       title: 'Autonomous Robotic Arm',
       subtitle: 'Six-axis manipulator with ROS2 integration',
       imageUrl: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800',
+      // ADDED: Gallery for slideshow testing
+      gallery: [
+        'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800',
+        'https://images.unsplash.com/photo-1534723452862-4c874018d66d?w=800', 
+        'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800'
+      ],
       tags: ['ROS2', 'Python', 'Computer Vision', 'Arduino'],
       githubUrl: 'https://github.com',
       description: 'Developed a fully autonomous 6-DOF robotic arm capable of object detection, path planning, and precise manipulation. Integrated computer vision for real-time object recognition and implemented inverse kinematics for smooth motion control.',
@@ -260,30 +274,30 @@ export const ProjectsPage = () => {
               software solutions, and notable achievements in the tech industry.
             </p>
             <div className="flex flex-wrap justify-center gap-4 mb-8">
-              <motion.a
-                href="#hardware"
+              <motion.button
+                onClick={() => scrollToSection('hardware')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 bg-gray-700/30 border-2 border-gray-500 rounded-lg text-gray-300 hover:border-gray-400 hover:text-white transition-all"
+                className="px-6 py-3 bg-gray-700/30 border-2 border-gray-500 rounded-lg text-gray-300 hover:border-gray-400 hover:text-white transition-all cursor-pointer"
               >
                 Hardware Projects
-              </motion.a>
-              <motion.a
-                href="#software"
+              </motion.button>
+              <motion.button
+                onClick={() => scrollToSection('software')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 bg-blue-500/20 border-2 border-blue-500 rounded-lg text-blue-400 hover:border-blue-400 hover:text-blue-300 transition-all"
+                className="px-6 py-3 bg-blue-500/20 border-2 border-blue-500 rounded-lg text-blue-400 hover:border-blue-400 hover:text-blue-300 transition-all cursor-pointer"
               >
                 Software Projects
-              </motion.a>
-              <motion.a
-                href="#achievements"
+              </motion.button>
+              <motion.button
+                onClick={() => scrollToSection('achievements')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 bg-cyan-500/20 border-2 border-cyan-500 rounded-lg text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-all"
+                className="px-6 py-3 bg-cyan-500/20 border-2 border-cyan-500 rounded-lg text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-all cursor-pointer"
               >
                 Achievements
-              </motion.a>
+              </motion.button>
             </div>
           </motion.div>
         </div>

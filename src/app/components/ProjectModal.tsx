@@ -1,11 +1,13 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Github, ExternalLink, Calendar, MapPin } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export interface ProjectDetails {
   title: string;
   subtitle: string;
   imageUrl: string;
+  // Added optional gallery for slideshow
+  gallery?: string[];
   tags: string[];
   description?: string;
   company?: string;
@@ -23,6 +25,26 @@ interface ProjectModalProps {
 }
 
 export const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Reset index when project changes
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [project]);
+
+  // Slideshow Logic
+  useEffect(() => {
+    if (!project?.gallery || project.gallery.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => 
+        prev === (project.gallery?.length || 1) - 1 ? 0 : prev + 1
+      );
+    }, 3000); // 3 seconds interval
+
+    return () => clearInterval(interval);
+  }, [project]);
+
   useEffect(() => {
     if (project) {
       document.body.style.overflow = 'hidden';
@@ -35,6 +57,13 @@ export const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
   }, [project]);
 
   if (!project) return null;
+
+  // Determine which image to show
+  const images = project.gallery && project.gallery.length > 0 
+    ? project.gallery 
+    : [project.imageUrl];
+  
+  const activeImage = images[currentImageIndex];
 
   return (
     <AnimatePresence>
@@ -54,7 +83,8 @@ export const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 border-2 border-blue-500/50 rounded-2xl shadow-2xl shadow-blue-500/20"
+          // ADDED: Custom Scrollbar Classes here
+          className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 border-2 border-blue-500/50 rounded-2xl shadow-2xl shadow-blue-500/20 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-gray-900 [&::-webkit-scrollbar-thumb]:bg-blue-500 [&::-webkit-scrollbar-thumb]:rounded-full"
         >
           {/* Close Button */}
           <button
@@ -64,14 +94,33 @@ export const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
             <X className="w-6 h-6 text-red-400" />
           </button>
 
-          {/* Image */}
-          <div className="relative h-64 md:h-80 overflow-hidden rounded-t-2xl">
-            <img
-              src={project.imageUrl}
-              alt={project.title}
-              className="w-full h-full object-cover"
-            />
+          {/* Image Slideshow */}
+          <div className="relative h-64 md:h-80 overflow-hidden rounded-t-2xl bg-gray-800">
+            <AnimatePresence mode='wait'>
+              <motion.img
+                key={activeImage}
+                src={activeImage}
+                alt={project.title}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="w-full h-full object-cover absolute inset-0"
+              />
+            </AnimatePresence>
             <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent" />
+            
+            {/* Optional: Slideshow Indicators */}
+            {images.length > 1 && (
+              <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
+                {images.map((_, idx) => (
+                  <div 
+                    key={idx}
+                    className={`w-2 h-2 rounded-full transition-all ${idx === currentImageIndex ? 'bg-blue-500 w-4' : 'bg-gray-500'}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Content */}

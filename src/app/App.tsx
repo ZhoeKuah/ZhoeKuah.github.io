@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'motion/react';
 import { AudioProvider } from './components/AudioContext';
 import { SplashScreen } from './components/SplashScreen';
@@ -23,29 +23,40 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-black text-gray-100">
+      {/* FIX 2: CustomCursor is now OUTSIDE the splash check, so it's always visible */}
       <CustomCursor />
       <ScrollToTop />
-      <Navbar />
-      <SpotifyWidget />
+
+      {/* Conditionally render Splash vs Main App */}
       <AnimatePresence mode="wait">
-        <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/timeline" element={<TimelinePage />} />
-          <Route path="/about" element={<AboutPage />} />
-        </Routes>
+        {showSplash ? (
+          <SplashScreen key="splash" onEnter={() => setShowSplash(false)} />
+        ) : (
+          <>
+            <Navbar />
+            <SpotifyWidget />
+            <AnimatePresence mode="wait">
+              <Routes location={location} key={location.pathname}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/projects" element={<ProjectsPage />} />
+                <Route path="/timeline" element={<TimelinePage />} />
+                <Route path="/about" element={<AboutPage />} />
+              </Routes>
+            </AnimatePresence>
+            <ContactFooter />
+          </>
+        )}
       </AnimatePresence>
-      <ContactFooter />
     </div>
   );
 }
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AudioProvider>
         <AppContent />
       </AudioProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 }

@@ -1,4 +1,6 @@
 import { useState } from 'react';
+//
+// 1. CHANGE BrowserRouter to HashRouter
 import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'motion/react';
 import { AudioProvider } from './components/AudioContext';
@@ -17,17 +19,12 @@ function AppContent() {
   const [showSplash, setShowSplash] = useState(true);
   const location = useLocation();
 
-  if (showSplash) {
-    return <SplashScreen onEnter={() => setShowSplash(false)} />;
-  }
-
   return (
     <div className="min-h-screen bg-black text-gray-100">
-      {/* FIX 2: CustomCursor is now OUTSIDE the splash check, so it's always visible */}
+      {/* 2. MOVED CustomCursor HERE so it is always visible, even on Splash Screen */}
       <CustomCursor />
       <ScrollToTop />
 
-      {/* Conditionally render Splash vs Main App */}
       <AnimatePresence mode="wait">
         {showSplash ? (
           <SplashScreen key="splash" onEnter={() => setShowSplash(false)} />
@@ -53,6 +50,7 @@ function AppContent() {
 
 export default function App() {
   return (
+    // 3. WRAP with HashRouter to fix GitHub Pages 404 errors
     <HashRouter>
       <AudioProvider>
         <AppContent />

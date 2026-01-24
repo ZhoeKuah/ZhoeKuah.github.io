@@ -1,12 +1,12 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Github, ExternalLink, Calendar, MapPin } from 'lucide-react';
+import { X, Github, ExternalLink, Calendar, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export interface ProjectDetails {
   title: string;
   subtitle: string;
   imageUrl: string;
-  // Added optional gallery for slideshow
+  // ADDED: Gallery support
   gallery?: string[];
   tags: string[];
   description?: string;
@@ -25,24 +25,11 @@ interface ProjectModalProps {
 }
 
 export const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Reset index when project changes
+  // Reset slide when project changes
   useEffect(() => {
-    setCurrentImageIndex(0);
-  }, [project]);
-
-  // Slideshow Logic
-  useEffect(() => {
-    if (!project?.gallery || project.gallery.length <= 1) return;
-
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => 
-        prev === (project.gallery?.length || 1) - 1 ? 0 : prev + 1
-      );
-    }, 3000); // 3 seconds interval
-
-    return () => clearInterval(interval);
+    setCurrentSlide(0);
   }, [project]);
 
   useEffect(() => {
@@ -58,12 +45,16 @@ export const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
 
   if (!project) return null;
 
-  // Determine which image to show
-  const images = project.gallery && project.gallery.length > 0 
-    ? project.gallery 
-    : [project.imageUrl];
-  
-  const activeImage = images[currentImageIndex];
+  // Combine main image with gallery
+  const slides = [project.imageUrl, ...(project.gallery || [])];
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  };
 
   return (
     <AnimatePresence>
@@ -83,49 +74,68 @@ export const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          // ADDED: Custom Scrollbar Classes here
           className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 border-2 border-blue-500/50 rounded-2xl shadow-2xl shadow-blue-500/20 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-gray-900 [&::-webkit-scrollbar-thumb]:bg-blue-500 [&::-webkit-scrollbar-thumb]:rounded-full"
         >
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="sticky top-4 right-4 float-right z-10 p-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-full transition-all"
+            className="sticky top-4 right-4 float-right z-20 p-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-full transition-all"
           >
             <X className="w-6 h-6 text-red-400" />
           </button>
 
-          {/* Image Slideshow */}
-          <div className="relative h-64 md:h-80 overflow-hidden rounded-t-2xl bg-gray-800">
+          {/* Image Carousel */}
+          <div className="relative h-64 md:h-96 overflow-hidden rounded-t-2xl bg-black group">
             <AnimatePresence mode='wait'>
               <motion.img
-                key={activeImage}
-                src={activeImage}
-                alt={project.title}
+                key={currentSlide}
+                src={slides[currentSlide]}
+                alt={`${project.title} slide ${currentSlide + 1}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="w-full h-full object-cover absolute inset-0"
+                transition={{ duration: 0.3 }}
+                className="w-full h-full object-contain"
               />
             </AnimatePresence>
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent" />
             
-            {/* Optional: Slideshow Indicators */}
-            {images.length > 1 && (
-              <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
-                {images.map((_, idx) => (
-                  <div 
-                    key={idx}
-                    className={`w-2 h-2 rounded-full transition-all ${idx === currentImageIndex ? 'bg-blue-500 w-4' : 'bg-gray-500'}`}
-                  />
-                ))}
-              </div>
+            {/* Navigation Buttons (Only if > 1 image) */}
+            {slides.length > 1 && (
+              <>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); prevSlide(); }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-blue-500/50 rounded-full text-white backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); nextSlide(); }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-blue-500/50 rounded-full text-white backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+
+                {/* Dots Indicators */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                  {slides.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentSlide(idx)}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        idx === currentSlide ? 'bg-blue-500 w-4' : 'bg-gray-500 hover:bg-gray-400'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
             )}
+            
+            {/* Gradient Overlay for Text Visibility if needed, kept subtle */}
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent pointer-events-none" />
           </div>
 
           {/* Content */}
           <div className="p-8">
-            {/* Title */}
             <h2 className="text-4xl font-bold text-white mb-2">{project.title}</h2>
             <p className="text-xl text-blue-400 mb-6">{project.subtitle}</p>
 

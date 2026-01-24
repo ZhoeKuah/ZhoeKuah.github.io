@@ -207,7 +207,7 @@ export const AboutPage = () => {
               <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl blur opacity-40 group-hover:opacity-75 transition duration-500"></div>
                 <img
-                    src="https://images.unsplash.com/photo-1747811854184-95f49a6d024d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080"
+                    src="images/about/portrait.jpeg"
                     alt="Portrait"
                     className="relative w-full aspect-[3/4] object-cover rounded-2xl shadow-2xl"
                   />

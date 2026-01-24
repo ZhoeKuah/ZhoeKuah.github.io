@@ -10,6 +10,9 @@ interface CarouselProps {
 export const ProjectCarousel = ({ children, onSlideClick }: CarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  // ADDED: State to track if user is hovering
+  const [isPaused, setIsPaused] = useState(false);
+  
   const dragStartX = useRef(0);
 
   const nextSlide = () => {
@@ -27,11 +30,15 @@ export const ProjectCarousel = ({ children, onSlideClick }: CarouselProps) => {
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
     setIsDragging(true);
     dragStartX.current = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    // Also pause when dragging starts
+    setIsPaused(true);
   };
 
   const handleDragEnd = (e: React.MouseEvent | React.TouchEvent) => {
     if (!isDragging) return;
     setIsDragging(false);
+    // Unpause when drag ends (optional, or let mouseLeave handle it)
+    setIsPaused(false);
     
     const endX = 'changedTouches' in e ? e.changedTouches[0].clientX : e.clientX;
     const diff = dragStartX.current - endX;
@@ -45,19 +52,22 @@ export const ProjectCarousel = ({ children, onSlideClick }: CarouselProps) => {
     }
   };
 
-  // Auto-scroll effect (optional)
+  // UPDATED: Auto-scroll now respects 'isPaused'
   useEffect(() => {
+    // If hovering (paused), do NOT set the timer
+    if (isPaused) return;
+
     const timer = setInterval(() => {
       nextSlide();
     }, 5000);
+
     return () => clearInterval(timer);
-  }, [children.length]);
+  }, [children.length, isPaused]); // Re-run effect when pause state changes
 
   const getVisibleSlides = () => {
     const slides = [];
     const totalSlides = children.length;
     
-    // Show 3 slides: prev, current (center), next
     for (let i = -1; i <= 1; i++) {
       const index = (currentIndex + i + totalSlides) % totalSlides;
       slides.push({
@@ -71,13 +81,18 @@ export const ProjectCarousel = ({ children, onSlideClick }: CarouselProps) => {
   };
 
   return (
-    <div className="relative w-full overflow-hidden py-12">
+    <div 
+      className="relative w-full overflow-hidden py-12"
+      // ADDED: Hover listeners to the main container
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
       {/* Carousel Container */}
       <div
         className="relative flex items-center justify-center gap-4 min-h-[400px]"
         onMouseDown={handleDragStart}
         onMouseUp={handleDragEnd}
-        onMouseLeave={handleDragEnd}
+        onMouseLeave={handleDragEnd} // This handles drag interruption
         onTouchStart={handleDragStart}
         onTouchEnd={handleDragEnd}
       >

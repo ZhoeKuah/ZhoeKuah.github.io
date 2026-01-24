@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { ExternalLink, Github } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 interface SmartCardProps {
   title: string;
@@ -28,27 +28,29 @@ export const SmartCard: React.FC<SmartCardProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Combine main image with gallery
-  const allImages = [imageUrl, ...(gallery || [])];
+  // [FIX 1] MEMOIZE: This ensures the array is stable and doesn't reset the timer unexpectedly
+  const allImages = useMemo(() => {
+    const imgs = [imageUrl, ...(gallery || [])];
+    return imgs.filter(url => url && url.length > 0);
+  }, [imageUrl, gallery]);
 
-  // LOGIC: Auto-cycle, but PAUSE when hovered
   useEffect(() => {
-    let interval: any;
-    
-    // Only cycle if NOT hovered and there are multiple images
-    if (!isHovered && allImages.length > 1) {
-      interval = setInterval(() => {
-        setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
-      }, 2500); // Slowed down to 2.5s for better UX
-    } 
-    
+    // [FIX 2] STOPPING LOGIC: 
+    // If user is hovering OR there is only 1 image, DO NOT start the timer.
+    if (isHovered || allImages.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
+    }, 2500); // 2.5 seconds per slide
+
+    // Cleanup: This clears the interval immediately when isHovered becomes true
     return () => clearInterval(interval);
-  }, [isHovered, allImages.length]);
+  }, [isHovered, allImages.length]); 
 
   const variantStyles = {
     hardware: {
       border: 'border-gray-500/50 hover:border-gray-400',
-      overlay: 'bg-gray-900/40 hover:bg-gray-900/60', // Lighter overlay for visibility
+      overlay: 'bg-gray-900/40 hover:bg-gray-900/60',
       tagBg: 'bg-gray-700/50 border-gray-500/50',
       glow: 'shadow-gray-500/20',
     },
@@ -81,12 +83,12 @@ export const SmartCard: React.FC<SmartCardProps> = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
         setIsHovered(false);
-        setCurrentImageIndex(0); // Optional: Reset to cover image on leave? Remove this line if you prefer it to resume where it left off.
+        setCurrentImageIndex(0); // Reset to cover image when mouse leaves
       }}
       onClick={handleClick}
       className={`group relative h-80 rounded-lg border ${style.border} overflow-hidden cursor-pointer transition-all duration-300 hover:${style.glow} hover:shadow-xl bg-gray-900`}
     >
-      {/* 1. FIXED IMAGE RENDERING: Using regular <img> tag instead of background-image */}
+      {/* Image Display */}
       <AnimatePresence mode='wait'>
         <motion.img
           key={currentImageIndex}
@@ -98,9 +100,8 @@ export const SmartCard: React.FC<SmartCardProps> = ({
           transition={{ duration: 0.5 }}
           className="absolute inset-0 w-full h-full object-cover"
           onError={(e) => {
-            // Fallback if image fails
             (e.target as HTMLImageElement).style.display = 'none'; 
-            (e.target as HTMLImageElement).parentElement!.style.backgroundColor = '#1f2937'; // gray-800
+            (e.target as HTMLImageElement).parentElement!.style.backgroundColor = '#1f2937';
           }}
         />
       </AnimatePresence>

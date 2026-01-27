@@ -1,4 +1,5 @@
 import { Mail, Github, Linkedin, Twitter } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const ContactFooter = () => {
   const currentYear = new Date().getFullYear();
@@ -23,41 +24,41 @@ export const ContactFooter = () => {
             <h3 className="text-lg font-semibold mb-4 text-white">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <Link to="/" className="text-gray-400 hover:text-blue-400 transition-colors">
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <Link to="/projects" className="text-gray-400 hover:text-blue-400 transition-colors">
                   Projects
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <Link to="/timeline" className="text-gray-400 hover:text-blue-400 transition-colors">
                   Timeline
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <Link to="/about" className="text-gray-400 hover:text-blue-400 transition-colors">
                   About
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Contact - External links stay as <a> tags */}
           <div>
             <h3 className="text-lg font-semibold mb-4 text-white">Connect</h3>
             <div className="flex space-x-4 mb-4">
               <a
-                href="mailto:engineer@example.com"
+                href="mailto:kuahzh@gmail.com"
                 className="p-2 bg-blue-500/10 border border-blue-500/30 rounded-lg hover:bg-blue-500/20 hover:border-blue-500/50 transition-all"
                 aria-label="Email"
               >
                 <Mail className="w-5 h-5 text-blue-400" />
               </a>
               <a
-                href="https://github.com"
+                href="https://github.com/ZhoeKuah"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 bg-blue-500/10 border border-blue-500/30 rounded-lg hover:bg-blue-500/20 hover:border-blue-500/50 transition-all"
@@ -85,7 +86,7 @@ export const ContactFooter = () => {
               </a>
             </div>
             <p className="text-sm text-gray-400">
-              engineer@example.com
+              kuahzh@gmail.com
             </p>
           </div>
         </div>

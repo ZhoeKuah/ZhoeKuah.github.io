@@ -5,21 +5,21 @@ import { Cpu, Code, Zap, Book, Music, Coffee, Gamepad2, Mountain, Globe, Camera,
 export const interests = [
   { icon: Cpu, label: 'Robotics', color: 'cyan' },
   { icon: Code, label: 'Open Source', color: 'emerald' },
-  { icon: Zap, label: 'Hackathons', color: 'yellow' },
+  { icon: Zap, label: 'Projects', color: 'yellow' },
   { icon: Book, label: 'Sci-Fi Lit', color: 'pink' },
   { icon: Music, label: 'Synthwave', color: 'purple' },
   { icon: Coffee, label: 'Pour Over', color: 'orange' },
   { icon: Gamepad2, label: 'Gaming', color: 'green' },
-  { icon: Mountain, label: 'Hiking', color: 'teal' },
-  { icon: Globe, label: 'Travel', color: 'blue' },
   { icon: Camera, label: 'Photo', color: 'red' },
 ];
 
 export const languages = [
   { name: 'Mandarin', level: 100, color: 'red' },
   { name: 'English', level: 100, color: 'cyan' },
-  { name: 'Malay', level: 60, color: 'green' },
-  { name: 'Japanese', level: 30, color: 'pink' },
+  { name: 'Malay', level: 80, color: 'green' },
+  { name: 'Hokkien', level: 90, color: 'orange' },
+  { name: 'Cantonese', level: 80, color: 'brown' },
+  { name: 'Japanese', level: 60, color: 'pink' },
 ];
 
 export const traits = [

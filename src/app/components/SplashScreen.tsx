@@ -18,7 +18,8 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onEnter }) => {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          <h1 className="mb-4 text-6xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+          {/* Added pb-4 to fix clipped descenders (g, y) */}
+          <h1 className="mb-4 pb-4 text-6xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
             The Engineer's Terminal
           </h1>
           <p className="mb-8 text-gray-400 text-xl">

@@ -37,7 +37,15 @@ const LanguageRing = ({ language, level, color, delay }: { language: string, lev
 };
 
 const InterestHex = ({ icon: Icon, label, color, index }: { icon: any, label: string, color: string, index: number }) => (
-  <motion.div initial={{ scale: 0, opacity: 0 }} whileInView={{ scale: 1, opacity: 1 }} viewport={{ once: true }} transition={{ delay: index * 0.05, type: 'spring' }} whileHover={{ scale: 1.1, rotate: 5 }} className="flex flex-col items-center justify-center p-4 bg-gray-900/50 border border-gray-700 hover:border-emerald-500/50 rounded-2xl transition-all group">
+  <motion.div 
+    initial={{ scale: 0, opacity: 0 }} 
+    whileInView={{ scale: 1, opacity: 1 }} 
+    viewport={{ once: true }} 
+    transition={{ delay: index * 0.05, type: 'spring' }} 
+    whileHover={{ scale: 1.1, rotate: 5 }} 
+    // ADDED: w-28 h-28 flex-shrink-0 (Fixed size for uniformity)
+    className="flex flex-col items-center justify-center w-28 h-28 flex-shrink-0 p-4 bg-gray-900/50 border border-gray-700 hover:border-emerald-500/50 rounded-2xl transition-all group"
+  >
     <div className={`p-3 rounded-xl bg-gray-800 group-hover:bg-${color}-500/20 transition-colors mb-2`}>
       <Icon className={`w-6 h-6 text-gray-400 group-hover:text-${color}-400 transition-colors`} />
     </div>
@@ -79,15 +87,25 @@ export const AboutPage = () => {
             <p className="text-gray-400 text-xl max-w-3xl mx-auto">Robotics Engineer. Open Source Advocate. Coffee Enthusiast.</p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-3 gap-8 mb-20">
-             <motion.div className="lg:col-span-1" initial={{ opacity:0, scale:0.9 }} whileInView={{ opacity:1, scale:1 }}>
-              <div className="relative group">
+          {/* Row 1: Portrait & Who I Am */}
+          <div className="grid lg:grid-cols-3 gap-8 mb-20 items-stretch">
+             
+             {/* IMAGE COLUMN */}
+             <motion.div className="lg:col-span-1 h-full flex justify-center" initial={{ opacity:0, scale:0.9 }} whileInView={{ opacity:1, scale:1 }}>
+              <div className="relative group h-96 w-auto mx-auto inline-block lg:h-full lg:w-full lg:block">
                 <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl blur opacity-40 group-hover:opacity-75 transition duration-500"></div>
-                <img src="/images/about/portrait.jpeg" alt="Portrait" className="relative w-full aspect-[3/4] object-cover rounded-2xl shadow-2xl" />
+                <img 
+                  src="/images/about/portrait.jpeg" 
+                  alt="Portrait" 
+                  className="relative h-full w-auto mx-auto object-contain lg:w-full lg:h-full lg:object-cover rounded-2xl shadow-2xl" 
+                />
               </div>
             </motion.div>
 
-            <motion.div className="lg:col-span-2 bg-gray-900/50 backdrop-blur-md border border-gray-800 rounded-2xl p-8 flex flex-col justify-center">
+            {/* CONTENT COLUMN */}
+            <motion.div 
+              className="lg:col-span-2 bg-[#0a0a0a] border border-gray-800 rounded-2xl p-8 flex flex-col justify-center"
+            >
               <Heart className="w-10 h-10 text-emerald-400 mb-6" />
               <h2 className="text-3xl font-bold text-white mb-4">Who I Am</h2>
               <p className="text-gray-300 text-lg leading-relaxed mb-6">I am an engineering professional who prioritizes <span className="text-emerald-400">structured reasoning</span> and practical application over raw theory. My approach is defined by a rigorous focus on the <span className="text-blue-400">"why"</span> behind system design—whether justifying a specific control logic or analyzing the limitations of a motion planner.</p>
@@ -104,23 +122,39 @@ export const AboutPage = () => {
             </motion.div>
           </div>
 
-          <div className="grid lg:grid-cols-12 gap-8 mb-20">
-            <motion.div className="lg:col-span-4 bg-gray-900/40 border border-gray-800 rounded-2xl p-8 flex flex-col items-center" initial={{ x: -50, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} viewport={{ once: true }}>
+          {/* Row 2: Communication & Interests */}
+          <div className="grid lg:grid-cols-2 gap-8 mb-20 items-stretch">
+            
+            {/* Communication Card */}
+            <motion.div 
+              className="bg-gray-900/40 border border-gray-800 rounded-2xl p-8 flex flex-col items-center h-auto lg:h-full" 
+              initial={{ x: -50, opacity: 0 }} 
+              whileInView={{ x: 0, opacity: 1 }} 
+              viewport={{ once: true }}
+            >
               <div className="flex items-center gap-3 mb-8 w-full">
                 <div className="p-2 bg-blue-500/10 rounded-lg"><Languages className="w-6 h-6 text-blue-400" /></div>
                 <h3 className="text-xl font-bold text-white">Communication</h3>
               </div>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-8">
+              
+              <div className="w-full flex-grow flex flex-wrap justify-center content-center gap-8">
                 {languages.map((lang, i) => <LanguageRing key={lang.name} language={lang.name} level={lang.level} color={lang.color} delay={i * 0.1} />)}
               </div>
             </motion.div>
 
-            <motion.div className="lg:col-span-8 bg-gray-900/40 border border-gray-800 rounded-2xl p-8" initial={{ x: 50, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} viewport={{ once: true }}>
+            {/* Interests Card */}
+            <motion.div 
+              className="bg-gray-900/40 border border-gray-800 rounded-2xl p-8 flex flex-col h-auto lg:h-full" 
+              initial={{ x: 50, opacity: 0 }} 
+              whileInView={{ x: 0, opacity: 1 }} 
+              viewport={{ once: true }}
+            >
               <div className="flex items-center gap-3 mb-8">
                 <div className="p-2 bg-purple-500/10 rounded-lg"><Sparkles className="w-6 h-6 text-purple-400" /></div>
                 <h3 className="text-xl font-bold text-white">Interests & Hobbies</h3>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              
+              <div className="flex-grow flex flex-wrap justify-center content-center gap-4">
                 {interests.map((interest, i) => <InterestHex key={i} {...interest} index={i} />)}
               </div>
             </motion.div>
@@ -156,7 +190,7 @@ export const AboutPage = () => {
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-2xl font-bold text-emerald-400">{log.year}</h3>
                   </div>
-                  <h4 className="text-lg text-white font-medium mb-3">{log.summary}</h4>
+                  <p className="text-sm text-gray-300 leading-relaxed mb-4">{log.summary}</p>
                   <div className="flex flex-wrap gap-2">
                     {log.highlights.map((h, j) => <span key={j} className="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-full border border-emerald-500/20">{h}</span>)}
                   </div>

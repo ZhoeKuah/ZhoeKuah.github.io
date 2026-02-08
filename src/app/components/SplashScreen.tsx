@@ -36,6 +36,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onEnter }) => {
           <p className="mt-4 text-sm text-gray-500">
             This experience includes ambient audio
           </p>
+          <p className="mt-2 text-sm text-gray-500">
+            Note: This website has incomplete sections and information which will be updated soon, possibly after Chinese New Year (CNY).
+          </p>
         </motion.div>
       </div>
     </motion.div>

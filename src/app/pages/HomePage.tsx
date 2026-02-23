@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Code, Briefcase, User } from 'lucide-react';
 import { useEffect } from 'react';
 import { useAudio } from '../components/AudioContext';
+import { CosmicBackground } from '../components/CosmicBackground';
 
 export const HomePage = () => {
   const { changeTrack } = useAudio();
@@ -48,36 +49,63 @@ export const HomePage = () => {
         {/* Animated Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-black via-blue-950/20 to-black">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzNiODJmNiIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20" />
+          <CosmicBackground />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-5 gap-12 md:gap-16 items-center">
           {/* Left Side - Profile */}
           <motion.div
             initial={{ x: -50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.8 }}
-            className="text-center md:text-left"
+            className="md:col-span-2 flex flex-col gap-8 items-center md:items-start w-full"
           >
-            <div className="w-48 h-48 mx-auto md:mx-0 mb-6 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 p-1 shadow-2xl shadow-blue-500/50">
-              <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center">
-                <User className="w-20 h-20 text-blue-400" />
-              </div>
-            </div>
-            <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">
-              The Engineer's Terminal
-            </h1>
-            <p className="text-xl text-gray-400 mb-6">
-              Innovating at the intersection of hardware and software
-            </p>
-            <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-              {['ROS2', 'Python', 'C++', 'IoT', 'AI/ML'].map((skill) => (
-                <span
-                  key={skill}
-                  className="px-3 py-1 bg-blue-500/20 border border-blue-500/50 rounded-full text-sm text-blue-400"
-                >
-                  {skill}
-                </span>
-              ))}
+            {/* Portrait Section */}
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              whileHover={{ scale: 1.05 }}
+              className="flex justify-center md:justify-start"
+            >
+              <motion.div
+                animate={{
+                  boxShadow: [
+                    '0 0 20px rgba(59, 130, 246, 0.3)',
+                    '0 0 40px rgba(59, 130, 246, 0.5)',
+                    '0 0 20px rgba(59, 130, 246, 0.3)'
+                  ]
+                }}
+                transition={{ duration: 4, repeat: Infinity }}
+                className="w-56 h-56 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 p-1 shadow-2xl shadow-blue-500/50"
+              >
+                <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center overflow-hidden">
+                  <img src="/images/about/portrait.jpeg" alt="Portrait" className="w-full h-full object-cover" />
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Content Section */}
+            <div className="flex flex-col w-full gap-4">
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.6 }}
+                className="text-center md:text-left"
+              >
+                <h1 className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                  The Engineer's Terminal
+                </h1>
+              </motion.div>
+
+              <motion.p
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.6, duration: 0.6 }}
+                className="text-gray-300 text-lg text-center md:text-left leading-relaxed"
+              >
+                Innovating at the intersection of hardware and software. Robotics engineer passionate about building intelligent systems.
+              </motion.p>
             </div>
           </motion.div>
 
@@ -86,7 +114,7 @@ export const HomePage = () => {
             initial={{ x: 50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
-            className="relative"
+            className="md:col-span-3 relative"
           >
             <div className="bg-gray-900/50 backdrop-blur-sm border border-emerald-500/30 rounded-lg p-6 shadow-xl shadow-emerald-500/20">
               <div className="flex items-center gap-2 mb-4">
@@ -102,7 +130,17 @@ export const HomePage = () => {
                 <div className="text-emerald-400 ml-4">
                   Senior Engineer | Problem Solver | Tech Enthusiast
                 </div>
-                
+
+                <div className="mt-4">
+                  <span className="text-gray-500">$ </span>
+                  <span className="text-white">cat ~/profile/info.txt</span>
+                </div>
+                <div className="ml-4 space-y-1">
+                  <div className="text-cyan-400">Role: Senior Engineer</div>
+                  <div className="text-teal-400">Focus: Robotics & Systems</div>
+                  <div className="text-blue-400">Expertise: ROS2, Python, C++</div>
+                </div>
+
                 <div className="mt-4">
                   <span className="text-gray-500">$ </span>
                   <span className="text-white">cat ~/skills/robotics.txt</span>
@@ -124,7 +162,16 @@ export const HomePage = () => {
                   <div className="text-green-400">drwxr-xr-x Node.js</div>
                   <div className="text-purple-400">drwxr-xr-x React</div>
                 </div>
-                
+
+                <div className="mt-4">
+                  <span className="text-gray-500">$ </span>
+                  <span className="text-white">quick-skills --show-all</span>
+                </div>
+                <div className="ml-4 space-y-1">
+                  <div className="text-yellow-400">• ROS2 • Python • C++</div>
+                  <div className="text-purple-400">• IoT • AI/ML</div>
+                </div>
+
                 <div className="mt-4">
                   <span className="text-gray-500">$ </span>
                   <span className="text-white">./deploy_innovation.sh</span>

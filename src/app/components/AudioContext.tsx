@@ -1,12 +1,28 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Howl } from 'howler';
+import { useCosmic, BackgroundType } from '../context/CosmicContext';
 
 interface AudioContextType {
   isMuted: boolean;
   isPlaying: boolean;
   toggleMute: () => void;
-  changeTrack: (trackName: string) => void;
+  currentBackground: BackgroundType;
+  currentTrackName: string;
 }
+
+// Track paths - placeholders in public/audio folder
+const tracks: Record<BackgroundType, string> = {
+  none: '/audio/denis-pavlov-music-magical-technology-sci-fi-science-futuristic-game-music-300607.mp3',
+  cosmic: '/audio/the_mountain-space-133254.mp3',
+  bubble: '/audio/music_for_videos-relaxing-145038.mp3',
+};
+
+// Track display names
+const trackNames: Record<BackgroundType, string> = {
+  none: 'Tech Ambient',
+  cosmic: 'Mountain Space',
+  bubble: 'Relaxing Bubbles',
+};
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
@@ -22,49 +38,38 @@ interface AudioProviderProps {
   children: React.ReactNode;
 }
 
-// Spotify playlist URL - Lo-fi/Chill vibes
-const SPOTIFY_PLAYLIST_URL = 'https://open.spotify.com/playlist/2OGnRhif1an83oSPy3OYHC?si=2e3a8fcbccca45d1';
-
-// Using a reliable lo-fi stream as placeholder (since direct Spotify streaming requires auth)
-const tracks: Record<string, string> = {
-  home: 'https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3',
-  projects: 'https://assets.mixkit.co/music/preview/mixkit-cold-nights-2790.mp3',
-  about: 'https://assets.mixkit.co/music/preview/mixkit-chill-vibes-526.mp3',
-  timeline: 'https://assets.mixkit.co/music/preview/mixkit-ambient-mystical-village-10.mp3',
-  // Default playlist track (lo-fi style)
-  playlist: 'https://assets.mixkit.co/music/preview/mixkit-chill-vibes-526.mp3',
-};
-
 export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const [isMuted, setIsMuted] = useState(true);
-  const [currentTrack, setCurrentTrack] = useState('playlist');
+  const { backgroundType: currentBackground } = useCosmic();
   const soundRef = useRef<Howl | null>(null);
 
-  const changeTrack = (trackName: string) => {
+  const loadTrack = (backgroundType: BackgroundType) => {
+    // Stop existing sound
     if (soundRef.current) {
-      soundRef.current.fade(1, 0, 500);
-      setTimeout(() => {
-        soundRef.current?.stop();
-        soundRef.current?.unload();
-        loadTrack(trackName);
-      }, 500);
-    } else {
-      loadTrack(trackName);
+      soundRef.current.stop();
+      soundRef.current.unload();
     }
-    setCurrentTrack(trackName);
-  };
 
-  const loadTrack = (trackName: string) => {
-    const trackUrl = tracks[trackName] || tracks.playlist;
+    const trackUrl = tracks[backgroundType];
     soundRef.current = new Howl({
       src: [trackUrl],
       loop: true,
       volume: isMuted ? 0 : 0.3,
+      html5: true, // Enable HTML5 Audio for streaming
+      onloaderror: (_id, error) => {
+        console.warn(`Failed to load track for ${backgroundType}:`, error);
+      },
     });
+
     if (!isMuted) {
       soundRef.current.play();
     }
   };
+
+  // Load track when background changes and not muted
+  useEffect(() => {
+    loadTrack(currentBackground);
+  }, [currentBackground]);
 
   const toggleMute = () => {
     const newMutedState = !isMuted;
@@ -80,9 +85,20 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         }
       }
     } else if (!newMutedState) {
-      loadTrack(currentTrack);
+      loadTrack(currentBackground);
     }
   };
+
+  // Update volume when muted state changes
+  useEffect(() => {
+    if (soundRef.current) {
+      if (isMuted) {
+        soundRef.current.fade(soundRef.current.volume(), 0, 300);
+      } else {
+        soundRef.current.volume(0.3);
+      }
+    }
+  }, [isMuted]);
 
   useEffect(() => {
     return () => {
@@ -94,11 +110,16 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <AudioContext.Provider value={{ isMuted, isPlaying: !isMuted, toggleMute, changeTrack }}>
+    <AudioContext.Provider 
+      value={{ 
+        isMuted, 
+        isPlaying: !isMuted, 
+        toggleMute, 
+        currentBackground,
+        currentTrackName: trackNames[currentBackground]
+      }}
+    >
       {children}
     </AudioContext.Provider>
   );
 };
-
-// Export Spotify playlist URL for use in SpotifyWidget
-export const getSpotifyPlaylistUrl = () => SPOTIFY_PLAYLIST_URL;

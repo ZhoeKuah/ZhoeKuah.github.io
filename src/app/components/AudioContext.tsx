@@ -3,6 +3,7 @@ import { Howl } from 'howler';
 
 interface AudioContextType {
   isMuted: boolean;
+  isPlaying: boolean;
   toggleMute: () => void;
   changeTrack: (trackName: string) => void;
 }
@@ -21,17 +22,22 @@ interface AudioProviderProps {
   children: React.ReactNode;
 }
 
-// Mock audio tracks - in production these would be actual audio files
+// Spotify playlist URL - Lo-fi/Chill vibes
+const SPOTIFY_PLAYLIST_URL = 'https://open.spotify.com/playlist/2OGnRhif1an83oSPy3OYHC?si=2e3a8fcbccca45d1';
+
+// Using a reliable lo-fi stream as placeholder (since direct Spotify streaming requires auth)
 const tracks: Record<string, string> = {
   home: 'https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3',
   projects: 'https://assets.mixkit.co/music/preview/mixkit-cold-nights-2790.mp3',
   about: 'https://assets.mixkit.co/music/preview/mixkit-chill-vibes-526.mp3',
   timeline: 'https://assets.mixkit.co/music/preview/mixkit-ambient-mystical-village-10.mp3',
+  // Default playlist track (lo-fi style)
+  playlist: 'https://assets.mixkit.co/music/preview/mixkit-chill-vibes-526.mp3',
 };
 
 export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const [isMuted, setIsMuted] = useState(true);
-  const [currentTrack, setCurrentTrack] = useState('home');
+  const [currentTrack, setCurrentTrack] = useState('playlist');
   const soundRef = useRef<Howl | null>(null);
 
   const changeTrack = (trackName: string) => {
@@ -49,7 +55,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   };
 
   const loadTrack = (trackName: string) => {
-    const trackUrl = tracks[trackName] || tracks.home;
+    const trackUrl = tracks[trackName] || tracks.playlist;
     soundRef.current = new Howl({
       src: [trackUrl],
       loop: true,
@@ -88,8 +94,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <AudioContext.Provider value={{ isMuted, toggleMute, changeTrack }}>
+    <AudioContext.Provider value={{ isMuted, isPlaying: !isMuted, toggleMute, changeTrack }}>
       {children}
     </AudioContext.Provider>
   );
 };
+
+// Export Spotify playlist URL for use in SpotifyWidget
+export const getSpotifyPlaylistUrl = () => SPOTIFY_PLAYLIST_URL;

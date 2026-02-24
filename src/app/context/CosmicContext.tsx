@@ -10,9 +10,9 @@ interface CosmicContextType {
 }
 
 const CosmicContext = createContext<CosmicContextType>({
-  cosmicEnabled: false,
+  cosmicEnabled: true,
   setCosmicEnabled: () => {},
-  backgroundType: 'none',
+  backgroundType: 'cosmic',
   setBackgroundType: () => {},
 });
 
@@ -23,7 +23,7 @@ interface CosmicProviderProps {
 }
 
 export const CosmicProvider = ({ children }: CosmicProviderProps) => {
-  const [cosmicEnabled, setCosmicEnabled] = useState(false);
+  const [cosmicEnabled, setCosmicEnabled] = useState(true);
   const [backgroundType, setBackgroundType] = useState<BackgroundType>('cosmic');
 
   const handleSetCosmicEnabled = (enabled: boolean) => {

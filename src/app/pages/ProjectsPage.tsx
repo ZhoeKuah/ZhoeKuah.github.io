@@ -77,7 +77,14 @@ export const ProjectsPage = () => {
       </section>
 
       {/* Hardware Section */}
-      <section id="hardware" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-900 to-gray-900 scroll-mt-16">
+      <section id="hardware" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900 scroll-mt-16 relative">
+        {/* Section Separator - Top */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gray-600" />
+        {/* Section Separator - Bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-600" />
+        
+        {/* Section Label */}
+        <div className="absolute top-4 right-8 text-gray-500 text-sm font-mono">01 / HARDWARE</div>
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
@@ -105,7 +112,12 @@ export const ProjectsPage = () => {
       </section>
 
       {/* Software Section */}
-      <section id="software" className="py-20 px-4 sm:px-6 lg:px-8 bg-black scroll-mt-16">
+      <section id="software" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-900 via-blue-950/30 to-gray-900 scroll-mt-16 relative">
+        {/* Section Separator - Top */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
+        
+        {/* Section Label */}
+        <div className="absolute top-4 right-8 text-blue-500/50 text-sm font-mono">02 / SOFTWARE</div>
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
@@ -135,7 +147,12 @@ export const ProjectsPage = () => {
       </section>
 
       {/* Achievements Section */}
-      <section id="achievements" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black to-cyan-950/20 scroll-mt-16">
+      <section id="achievements" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-900 via-cyan-950/30 to-black scroll-mt-16 relative">
+        {/* Section Separator - Top */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+        
+        {/* Section Label */}
+        <div className="absolute top-4 right-8 text-cyan-500/50 text-sm font-mono">03 / ACHIEVEMENTS</div>
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ y: 30, opacity: 0 }}

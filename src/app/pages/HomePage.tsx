@@ -128,7 +128,7 @@ export const HomePage = () => {
                   <span className="text-white">whoami</span>
                 </div>
                 <div className="text-emerald-400 ml-4">
-                  Senior Engineer | Problem Solver | Tech Enthusiast
+                  Mechatronic Engineer | Problem Solver | Tech Enthusiast
                 </div>
 
                 <div className="mt-4">
@@ -136,9 +136,9 @@ export const HomePage = () => {
                   <span className="text-white">cat ~/profile/info.txt</span>
                 </div>
                 <div className="ml-4 space-y-1">
-                  <div className="text-cyan-400">Role: Senior Engineer</div>
-                  <div className="text-teal-400">Focus: Robotics & Systems</div>
-                  <div className="text-blue-400">Expertise: ROS2, Python, C++</div>
+                  <div className="text-cyan-400">Role: Mechatronic Engineer</div>
+                  <div className="text-teal-400">Focus: Robotics & Systems Integration</div>
+                  <div className="text-blue-400">Expertise: ROS2, Labview, Solidworks, Matlab</div>
                 </div>
 
                 <div className="mt-4">
@@ -149,6 +149,8 @@ export const HomePage = () => {
                   <div className="text-cyan-400">→ ROS2 (Robot Operating System)</div>
                   <div className="text-teal-400">→ Gazebo Simulation & Testing</div>
                   <div className="text-blue-400">→ Computer Vision & SLAM</div>
+                  <div className="text-green-400">→ 3D Designing & Printing</div>
+                  <div className="text-yellow-400">→ Internet Of Things</div>
                 </div>
                 
                 <div className="mt-4">
@@ -165,11 +167,11 @@ export const HomePage = () => {
 
                 <div className="mt-4">
                   <span className="text-gray-500">$ </span>
-                  <span className="text-white">quick-skills --show-all</span>
+                  <span className="text-white">personal-Identity --show-all</span>
                 </div>
                 <div className="ml-4 space-y-1">
-                  <div className="text-yellow-400">• ROS2 • Python • C++</div>
-                  <div className="text-purple-400">• IoT • AI/ML</div>
+                  <div className="text-purple-400">• Driver • Tech Enthusiast • Vibe Coder </div>
+                  <div className="text-blue-400">• Hobby Developer • DIY maker • Gamer </div>
                 </div>
 
                 <div className="mt-4">
@@ -178,7 +180,7 @@ export const HomePage = () => {
                 </div>
                 <div className="ml-4 text-emerald-400">
                   <motion.span
-                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    animate={{ opacity: [0.5, 1, 1, 0.5] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
                     ✓ Ready for new challenges

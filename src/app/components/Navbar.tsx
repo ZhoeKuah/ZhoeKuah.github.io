@@ -49,14 +49,14 @@ export const Navbar = () => {
             to="/" 
             className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent hover:from-emerald-300 hover:to-teal-300 transition-all"
           >
-            ENGINEER.DEV
+            Kuah Zhun Hoe
           </Link>
 
           <div className="flex items-center gap-8">
             <div className="hidden md:flex items-center space-x-8">
               <Link 
                 to="/" 
-                className="text-gray-300 hover:text-emerald-400 transition-colors"
+                className={`transition-colors ${location.pathname === '/' ? 'text-emerald-400' : 'text-gray-300 hover:text-emerald-400'}`}
               >
                 Home
               </Link>
@@ -68,7 +68,7 @@ export const Navbar = () => {
               >
                 <button 
                   onClick={() => handleNavigation('/projects')}
-                  className="flex items-center space-x-1 text-gray-300 hover:text-emerald-400 transition-colors"
+                  className={`flex items-center space-x-1 transition-colors ${location.pathname === '/projects' ? 'text-blue-400' : 'text-gray-300 hover:text-blue-400'}`}
                 >
                   <span>Projects</span>
                   <ChevronDown className="w-4 h-4" />
@@ -112,7 +112,7 @@ export const Navbar = () => {
               >
                 <button 
                   onClick={() => handleNavigation('/timeline')}
-                  className="flex items-center space-x-1 text-gray-300 hover:text-emerald-400 transition-colors"
+                  className={`flex items-center space-x-1 transition-colors ${location.pathname === '/timeline' ? 'text-purple-400' : 'text-gray-300 hover:text-purple-400'}`}
                 >
                   <span>Timeline</span>
                   <ChevronDown className="w-4 h-4" />
@@ -142,7 +142,7 @@ export const Navbar = () => {
 
               <Link 
                 to="/about" 
-                className="text-gray-300 hover:text-emerald-400 transition-colors"
+                className={`transition-colors ${location.pathname === '/about' ? 'text-pink-400' : 'text-gray-300 hover:text-pink-400'}`}
               >
                 About
               </Link>

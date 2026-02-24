@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Code, Briefcase, User } from 'lucide-react';
 import { useEffect } from 'react';
 import { useAudio } from '../components/AudioContext';
-import { CosmicBackground } from '../components/CosmicBackground';
+//import { CosmicBackground } from '../components/CosmicBackground';
 
 export const HomePage = () => {
   const { changeTrack } = useAudio();
@@ -49,7 +49,7 @@ export const HomePage = () => {
         {/* Animated Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-black via-blue-950/20 to-black">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzNiODJmNiIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20" />
-          <CosmicBackground />
+          
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-5 gap-12 md:gap-16 items-center">

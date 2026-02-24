@@ -1,37 +1,42 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Volume2, VolumeX, ChevronDown } from 'lucide-react';
+import { Volume2, VolumeX, ChevronDown, Sparkles, Stars, Circle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAudio } from './AudioContext';
+import { useCosmic, BackgroundType } from '../context/CosmicContext';
+
+const backgroundOptions: { value: BackgroundType; label: string; icon: React.ReactNode }[] = [
+  { value: 'none', label: 'None', icon: null },
+  { value: 'cosmic', label: 'Cosmic', icon: <Stars className="w-4 h-4" /> },
+{ value: 'bubble', label: 'Bubble', icon: <Circle className="w-4 h-4" /> },
+];
 
 export const Navbar = () => {
   const { isMuted, toggleMute } = useAudio();
+  const { cosmicEnabled, setCosmicEnabled, backgroundType, setBackgroundType } = useCosmic();
   const navigate = useNavigate();
   const location = useLocation();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [bgDropdownOpen, setBgDropdownOpen] = useState(false);
 
   const handleNavigation = (path: string, sectionId?: string) => {
     const currentPath = location.pathname;
     setOpenDropdown(null);
     
     if (currentPath === path && sectionId) {
-      // Same page navigation - just scroll to section
       const element = document.getElementById(sectionId);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     } else {
-      // Different page navigation - navigate first, then scroll to section
       navigate(path);
-      
       if (sectionId) {
-        // Wait for page transition, render, and scroll-to-top to complete
         setTimeout(() => {
           const element = document.getElementById(sectionId);
           if (element) {
             element.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
-        }, 800); // Increased delay to ensure page is fully rendered
+        }, 800);
       }
     }
   };
@@ -40,7 +45,6 @@ export const Navbar = () => {
     <nav className="sticky top-0 z-40 bg-black/90 backdrop-blur-md border-b border-emerald-500/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <Link 
             to="/" 
             className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent hover:from-emerald-300 hover:to-teal-300 transition-all"
@@ -49,7 +53,6 @@ export const Navbar = () => {
           </Link>
 
           <div className="flex items-center gap-8">
-            {/* Navigation Links */}
             <div className="hidden md:flex items-center space-x-8">
               <Link 
                 to="/" 
@@ -58,7 +61,6 @@ export const Navbar = () => {
                 Home
               </Link>
 
-              {/* Projects Dropdown */}
               <div
                 className="relative"
                 onMouseEnter={() => setOpenDropdown('projects')}
@@ -103,7 +105,6 @@ export const Navbar = () => {
                 </AnimatePresence>
               </div>
 
-              {/* Timeline Dropdown */}
               <div
                 className="relative"
                 onMouseEnter={() => setOpenDropdown('timeline')}
@@ -145,6 +146,48 @@ export const Navbar = () => {
               >
                 About
               </Link>
+            </div>
+
+            {/* Background Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setBgDropdownOpen(true)}
+              onMouseLeave={() => setBgDropdownOpen(false)}
+            >
+              <button
+                className={`p-2 transition-colors rounded-lg hover:bg-emerald-500/10 ${
+                  cosmicEnabled ? 'text-emerald-400' : 'text-gray-300 hover:text-emerald-400'
+                }`}
+                aria-label="Background settings"
+              >
+                <Sparkles className="w-6 h-6" />
+              </button>
+              <AnimatePresence>
+                {bgDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-full right-0 mt-2 w-40 bg-gray-900 border border-emerald-500/30 rounded-lg overflow-hidden shadow-lg shadow-emerald-500/20"
+                  >
+                    {backgroundOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => setBackgroundType(option.value)}
+                        className={`flex items-center gap-2 w-full text-left px-4 py-2 transition-colors ${
+                          backgroundType === option.value
+                            ? 'bg-emerald-500/20 text-emerald-400'
+                            : 'text-gray-300 hover:bg-emerald-500/10 hover:text-emerald-400'
+                        }`}
+                      >
+                        {option.icon}
+                        <span>{option.label}</span>
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Audio Toggle */}

@@ -1,16 +1,9 @@
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Code, Briefcase, User } from 'lucide-react';
-import { useEffect } from 'react';
-import { useAudio } from '../components/AudioContext';
 //import { CosmicBackground } from '../components/CosmicBackground';
 
 export const HomePage = () => {
-  const { changeTrack } = useAudio();
-
-  useEffect(() => {
-    changeTrack('home');
-  }, [changeTrack]);
 
   const navCards = [
     {

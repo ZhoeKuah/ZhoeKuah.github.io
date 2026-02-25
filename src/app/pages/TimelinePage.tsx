@@ -1,19 +1,13 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Briefcase, GraduationCap, Trophy, Lightbulb, MapPin, Calendar } from 'lucide-react';
 import { timelineData, groupByYear, TimelineEvent } from '../data/timelineData';
 import { ProjectModal, ProjectDetails } from '../components/ProjectModal';
-import { useAudio } from '../components/AudioContext';
 
 export const TimelinePage = () => {
-  const { changeTrack } = useAudio();
   const [selectedEvent, setSelectedEvent] = useState<ProjectDetails | null>(null);
   const groupedEvents = groupByYear(timelineData);
   const years = Object.keys(groupedEvents).sort((a, b) => Number(b) - Number(a));
-
-  useEffect(() => {
-    changeTrack('timeline');
-  }, [changeTrack]);
 
   // HELPER: Smooth scroll function
   const scrollToSection = (id: string) => {

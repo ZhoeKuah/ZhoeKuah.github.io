@@ -12,12 +12,13 @@ const backgroundOptions: { value: BackgroundType; label: string; icon: React.Rea
 ];
 
 export const Navbar = () => {
-  const { isMuted, toggleMute } = useAudio();
+  const { isMuted, toggleMute, volume, setVolume, currentTrackName } = useAudio();
   const { cosmicEnabled, setCosmicEnabled, backgroundType, setBackgroundType } = useCosmic();
   const navigate = useNavigate();
   const location = useLocation();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [bgDropdownOpen, setBgDropdownOpen] = useState(false);
+  const [volumeDropdownOpen, setVolumeDropdownOpen] = useState(false);
 
   const handleNavigation = (path: string, sectionId?: string) => {
     const currentPath = location.pathname;
@@ -190,14 +191,52 @@ export const Navbar = () => {
               </AnimatePresence>
             </div>
 
-            {/* Audio Toggle */}
-            <button
-              onClick={toggleMute}
-              className="p-2 text-gray-300 hover:text-emerald-400 transition-colors rounded-lg hover:bg-emerald-500/10"
-              aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
+            {/* Audio Toggle with Volume Control */}
+            <div
+              className="relative"
+              onMouseEnter={() => setVolumeDropdownOpen(true)}
+              onMouseLeave={() => setVolumeDropdownOpen(false)}
             >
-              {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
-            </button>
+              <button
+                onClick={toggleMute}
+                className="p-2 text-gray-300 hover:text-emerald-400 transition-colors rounded-lg hover:bg-emerald-500/10"
+                aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
+              >
+                {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
+              </button>
+              <AnimatePresence>
+                {volumeDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-full right-0 mt-2 w-48 bg-gray-900 border border-emerald-500/30 rounded-lg overflow-hidden shadow-lg shadow-emerald-500/20 p-3"
+                  >
+                    <div className="text-xs text-gray-400 mb-2">{currentTrackName}</div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.1"
+                      value={isMuted ? 0 : volume}
+                      onChange={(e) => {
+                        const newVolume = parseFloat(e.target.value);
+                        setVolume(newVolume);
+                        if (isMuted && newVolume > 0) {
+                          toggleMute();
+                        }
+                      }}
+                      className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                      aria-label="Volume control"
+                    />
+                    <div className="text-xs text-gray-400 mt-1 text-center">
+                      {Math.round((isMuted ? 0 : volume) * 100)}%
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </div>

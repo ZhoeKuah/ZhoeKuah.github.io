@@ -1,20 +1,14 @@
 import { motion } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Cpu, Code, Trophy } from 'lucide-react';
 import { SmartCard } from '../components/SmartCard';
 import { ProjectCarousel } from '../components/ProjectCarousel';
 import { ProjectModal } from '../components/ProjectModal';
-import { useAudio } from '../components/AudioContext';
 // IMPORT DATA
 import { hardwareProjects, softwareProjects, achievements, ProjectItem } from '../data/projectsData';
 
 export const ProjectsPage = () => {
-  const { changeTrack } = useAudio();
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
-
-  useEffect(() => {
-    changeTrack('projects');
-  }, [changeTrack]);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);

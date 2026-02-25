@@ -148,7 +148,7 @@ export const ContactFooter = () => {
               >
                 <Github className="w-5 h-5 text-blue-400" />
               </a>
-              <a
+              {/*<a
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -156,7 +156,7 @@ export const ContactFooter = () => {
                 aria-label="LinkedIn"
               >
                 <Linkedin className="w-5 h-5 text-blue-400" />
-              </a>
+              </a>*/}
             </div>
 
             {/* Message Box */}

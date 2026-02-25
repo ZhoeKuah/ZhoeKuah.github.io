@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 
 export interface Bubble {
   x: number;
@@ -71,7 +71,7 @@ export class BubbleEngine {
       vx: (Math.random() - 0.5) * this.config.speed,
       vy: -Math.random() * this.config.speed - 0.2,
       opacity: Math.random() * 0.3 + 0.1,
-      hue: Math.random() * 60 + 180, // Blue to purple range
+      hue: Math.random() * 60 + 180,
     };
   }
 
@@ -81,7 +81,6 @@ export class BubbleEngine {
 
   private update(): void {
     this.bubbles.forEach((bubble, index) => {
-      // Mouse interaction - repel bubbles
       const dx = bubble.x - this.mousePosition.x;
       const dy = bubble.y - this.mousePosition.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -92,19 +91,15 @@ export class BubbleEngine {
         bubble.vy += (dy / distance) * force;
       }
 
-      // Apply velocity
       bubble.x += bubble.vx;
       bubble.y += bubble.vy;
 
-      // Damping
       bubble.vx *= 0.98;
       bubble.vy *= 0.98;
 
-      // Keep bubbles floating upward with slight horizontal drift
-      bubble.vy -= 0.01; // Natural upward float
-      bubble.vx += (Math.random() - 0.5) * 0.02; // Random drift
+      bubble.vy -= 0.01;
+      bubble.vx += (Math.random() - 0.5) * 0.02;
 
-      // Reset bubble if it goes off screen
       if (bubble.y < -bubble.radius * 2 || 
           bubble.x < -bubble.radius * 2 || 
           bubble.x > this.canvas.width + bubble.radius * 2) {
@@ -114,12 +109,9 @@ export class BubbleEngine {
   }
 
   private draw(): void {
-    // Clear canvas completely for transparent background
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Draw bubbles
     this.bubbles.forEach((bubble) => {
-      // Draw outer glow
       const gradient = this.ctx.createRadialGradient(
         bubble.x, bubble.y, 0,
         bubble.x, bubble.y, bubble.radius
@@ -133,7 +125,6 @@ export class BubbleEngine {
       this.ctx.fillStyle = gradient;
       this.ctx.fill();
 
-      // Draw bubble highlight
       this.ctx.beginPath();
       this.ctx.arc(
         bubble.x - bubble.radius * 0.3, 
@@ -145,7 +136,6 @@ export class BubbleEngine {
       this.ctx.fillStyle = `rgba(255, 255, 255, ${bubble.opacity * 0.5})`;
       this.ctx.fill();
 
-      // Draw bubble outline
       this.ctx.beginPath();
       this.ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
       this.ctx.strokeStyle = `hsla(${bubble.hue}, 70%, 60%, ${bubble.opacity * 0.3})`;
@@ -185,7 +175,7 @@ interface BubbleBackgroundProps {
   className?: string;
 }
 
-export const BubbleBackground = ({ config, className = '' }: BubbleBackgroundProps) => {
+export const BubbleBackground: React.FC<BubbleBackgroundProps> = ({ config, className = '' }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<BubbleEngine | null>(null);
 
@@ -219,7 +209,6 @@ export const BubbleBackground = ({ config, className = '' }: BubbleBackgroundPro
   );
 };
 
-// Export factory for creating different background types
 export const createBubbleBackground = (type: 'default' | 'dense' | 'sparse', config?: BubbleBackgroundConfig) => {
   const presets = {
     default: {},

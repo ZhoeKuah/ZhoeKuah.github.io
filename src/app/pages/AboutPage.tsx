@@ -1,7 +1,5 @@
 import { motion } from 'motion/react';
-import { useEffect } from 'react';
 import { Heart, TrendingUp, AlertTriangle, Target, Zap, Sparkles, Languages } from 'lucide-react';
-import { useAudio } from '../components/AudioContext';
 // IMPORT DATA
 import { interests, languages, traits, swotData, developerLogs } from '../data/aboutData';
 
@@ -74,8 +72,7 @@ const SwotCard = ({ title, items, icon: Icon, color }: { title: string, items: s
 };
 
 export const AboutPage = () => {
-  const { changeTrack } = useAudio();
-  useEffect(() => { changeTrack('about'); }, [changeTrack]);
+  // Music auto-switches based on background type via AudioContext
 
   return (
     <motion.div initial={{ opacity: 0, x: -100 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 100 }} transition={{ duration: 0.5, ease: 'easeInOut' }} className="min-h-screen bg-gradient-to-b from-emerald-950/10 via-teal-950/20 to-black relative overflow-hidden">

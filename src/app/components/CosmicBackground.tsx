@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 
 export interface CosmicParticle {
   x: number;
@@ -24,7 +24,7 @@ const DEFAULT_CONFIG: Required<CosmicBackgroundConfig> = {
   starCount: 150,
   connectionDistance: 120,
   mouseInfluenceRadius: 150,
-  mouseInfluenceStrength: 0.5,
+  mouseInfluenceStrength: 0.05,
   colors: ['#3b82f6', '#8b5cf6', '#06b6d4', '#ec4899', '#10b981'],
   speed: 0.3,
 };
@@ -37,6 +37,9 @@ export class CosmicEngine {
   private animationId: number = 0;
   private config: Required<CosmicBackgroundConfig>;
   private isRunning = false;
+  private isInteracting = false;
+  private idleTimeout: ReturnType<typeof setTimeout> | null = null;
+  private idleDelay = 1000;
 
   constructor(canvas: HTMLCanvasElement, config: CosmicBackgroundConfig = {}) {
     this.canvas = canvas;
@@ -74,33 +77,53 @@ export class CosmicEngine {
 
   public updateMouse(x: number, y: number): void {
     this.mousePosition = { x, y };
+    this.triggerInteraction();
+  }
+
+  public updateTouch(x: number, y: number): void {
+    this.mousePosition = { x, y };
+    this.triggerInteraction();
+  }
+
+  private triggerInteraction(): void {
+    this.isInteracting = true;
+    
+    if (this.idleTimeout) {
+      clearTimeout(this.idleTimeout);
+    }
+    
+    if (!this.isRunning) {
+      this.start();
+    }
+    
+    this.idleTimeout = setTimeout(() => {
+      this.isInteracting = false;
+      this.stop();
+    }, this.idleDelay);
   }
 
   private update(): void {
     this.particles.forEach((particle) => {
-      // Twinkle effect
       particle.twinklePhase += particle.twinkleSpeed;
       
-      // Mouse influence
-      const dx = this.mousePosition.x - particle.x;
-      const dy = this.mousePosition.y - particle.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      
-      if (distance < this.config.mouseInfluenceRadius) {
-        const force = (1 - distance / this.config.mouseInfluenceRadius) * this.config.mouseInfluenceStrength;
-        particle.vx += (dx / distance) * force * 0.5;
-        particle.vy += (dy / distance) * force * 0.5;
+      if (this.isInteracting) {
+        const dx = this.mousePosition.x - particle.x;
+        const dy = this.mousePosition.y - particle.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < this.config.mouseInfluenceRadius && distance > 0) {
+          const force = (1 - distance / this.config.mouseInfluenceRadius) * this.config.mouseInfluenceStrength;
+          particle.vx += (dx / distance) * force * 0.5;
+          particle.vy += (dy / distance) * force * 0.5;
+        }
       }
 
-      // Apply velocity with damping
       particle.x += particle.vx;
       particle.y += particle.vy;
 
-      // Damping
       particle.vx *= 0.99;
       particle.vy *= 0.99;
 
-      // Keep within bounds (wrap around)
       if (particle.x < 0) particle.x = this.canvas.width;
       if (particle.x > this.canvas.width) particle.x = 0;
       if (particle.y < 0) particle.y = this.canvas.height;
@@ -109,13 +132,10 @@ export class CosmicEngine {
   }
 
   private draw(): void {
-    // Clear canvas completely for transparent background
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Draw connections first (behind stars)
     this.drawConnections();
 
-    // Draw stars
     this.particles.forEach((particle) => {
       const twinkle = Math.sin(particle.twinklePhase) * 0.3 + 0.7;
       this.ctx.beginPath();
@@ -123,7 +143,6 @@ export class CosmicEngine {
       this.ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity * twinkle})`;
       this.ctx.fill();
 
-      // Add glow for larger stars
       if (particle.radius > 1.2) {
         this.ctx.beginPath();
         this.ctx.arc(particle.x, particle.y, particle.radius * 3, 0, Math.PI * 2);
@@ -181,6 +200,9 @@ export class CosmicEngine {
 
   public destroy(): void {
     this.stop();
+    if (this.idleTimeout) {
+      clearTimeout(this.idleTimeout);
+    }
     window.removeEventListener('resize', () => this.resize());
   }
 }
@@ -190,7 +212,7 @@ interface CosmicBackgroundProps {
   className?: string;
 }
 
-export const CosmicBackground = ({ config, className = '' }: CosmicBackgroundProps) => {
+export const CosmicBackground: React.FC<CosmicBackgroundProps> = ({ config, className = '' }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<CosmicEngine | null>(null);
 
@@ -200,21 +222,38 @@ export const CosmicBackground = ({ config, className = '' }: CosmicBackgroundPro
     }
   }, []);
 
+  const handleTouchStart = useCallback((e: TouchEvent) => {
+    if (e.touches.length > 0 && engineRef.current) {
+      const touch = e.touches[0];
+      engineRef.current.updateTouch(touch.clientX, touch.clientY);
+    }
+  }, []);
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (e.touches.length > 0 && engineRef.current) {
+      const touch = e.touches[0];
+      engineRef.current.updateTouch(touch.clientX, touch.clientY);
+    }
+  }, []);
+
   useEffect(() => {
     if (!canvasRef.current) return;
 
     engineRef.current = new CosmicEngine(canvasRef.current, config);
-    engineRef.current.start();
 
     window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchstart', handleTouchStart);
+    window.addEventListener('touchmove', handleTouchMove);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
       if (engineRef.current) {
         engineRef.current.destroy();
       }
     };
-  }, [config, handleMouseMove]);
+  }, [config, handleMouseMove, handleTouchStart, handleTouchMove]);
 
   return (
     <canvas
@@ -224,7 +263,6 @@ export const CosmicBackground = ({ config, className = '' }: CosmicBackgroundPro
   );
 };
 
-// Export factory for creating different background types
 export const createCosmicBackground = (type: 'default' | 'dense' | 'sparse', config?: CosmicBackgroundConfig) => {
   const presets = {
     default: {},

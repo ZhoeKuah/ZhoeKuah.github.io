@@ -46,9 +46,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const soundRef = useRef<Howl | null>(null);
   const isInitialMount = useRef(true);
   
-  // Use ref to track mute state for spam-proof toggle
+  // Use refs to prevent dependency triggers on state changes
   const isMutedRef = useRef(false);
   const isTogglingRef = useRef(false);
+  const volumeRef = useRef(0.3);
 
   const loadAndPlayTrack = useCallback((backgroundType: BackgroundType, shouldPlay: boolean) => {
     if (soundRef.current) {
@@ -62,14 +63,13 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     soundRef.current = new Howl({
       src: [trackUrl],
       loop: true,
-      volume: volume,
+      volume: volumeRef.current, // Use ref to prevent reload on volume change
       html5: true,
       onload: () => {
         console.log('Track loaded successfully');
         setIsLoaded(true);
         if (shouldPlay) {
           soundRef.current?.play();
-          console.log('Playing track');
         }
       },
       onloaderror: (_id, error) => {
@@ -90,31 +90,31 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         soundRef.current.play();
       }
     }
-  }, [volume]);
+  }, []); // Empty dependencies: only the function logic is stored
 
+  // ONLY reload the track when the background theme changes
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
-      loadAndPlayTrack(currentBackground, !isMuted);
+      loadAndPlayTrack(currentBackground, !isMutedRef.current);
       return;
     }
     
-    loadAndPlayTrack(currentBackground, !isMuted);
-  }, [currentBackground, loadAndPlayTrack, isMuted]);
+    loadAndPlayTrack(currentBackground, !isMutedRef.current);
+  }, [currentBackground, loadAndPlayTrack]);
 
   const setVolume = useCallback((newVolume: number) => {
     setVolumeState(newVolume);
+    volumeRef.current = newVolume; // Update ref silently
     if (soundRef.current) {
       soundRef.current.volume(newVolume);
     }
   }, []);
 
   const toggleMute = useCallback(() => {
-    // Spam proof: prevent rapid clicking
     if (isTogglingRef.current) return;
     isTogglingRef.current = true;
     
-    // Use ref for current mute state
     const newMutedState = !isMutedRef.current;
     isMutedRef.current = newMutedState;
     setIsMuted(newMutedState);
@@ -129,7 +129,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
           }
         }, 300);
       } else {
-        soundRef.current.volume(volume);
+        soundRef.current.volume(volumeRef.current);
         if (!soundRef.current.playing()) {
           soundRef.current.play();
           console.log('Resumed playing');
@@ -139,11 +139,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       loadAndPlayTrack(currentBackground, !newMutedState);
     }
 
-    // Reset spam guard after animation
     setTimeout(() => {
       isTogglingRef.current = false;
     }, 350);
-  }, [currentBackground, loadAndPlayTrack, volume]);
+  }, [currentBackground, loadAndPlayTrack]);
 
   useEffect(() => {
     return () => {

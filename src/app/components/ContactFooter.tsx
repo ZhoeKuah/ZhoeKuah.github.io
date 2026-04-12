@@ -10,7 +10,11 @@ interface FeedbackMessage {
 }
 
 const FEEDBACK_KEY = 'portfolio_feedback';
-const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1476124111141863485/flKUPtbU-A_9GeAQE5Oqbe8C6PPauSNsk6ybp7kvqQbH9rOHW86N1RdzxrB1WZCUNMj6';
+const RATE_LIMIT_KEY = 'feedback_rate_limit';
+const RATE_LIMIT_MESSAGES = 5; // Max 5 messages
+const RATE_LIMIT_WINDOW = 3600000; // per hour (ms)
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000; // 1 second between retries
 
 export const ContactFooter = () => {
   const currentYear = new Date().getFullYear();
@@ -18,6 +22,7 @@ export const ContactFooter = () => {
   const [isSending, setIsSending] = useState(false);
   const [showBubble, setShowBubble] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [sentCount, setSentCount] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -30,7 +35,6 @@ export const ContactFooter = () => {
     const calculateWordLimit = () => {
       if (containerRef.current) {
         const height = containerRef.current.offsetHeight;
-        // Rough estimate: ~15 words per 50px height
         const limit = Math.floor((height / 50) * 15);
         setWordLimit(Math.max(50, Math.min(200, limit)));
       }
@@ -45,8 +49,50 @@ export const ContactFooter = () => {
   const wordCount = message.trim() ? message.trim().split(/\s+/).length : 0;
   const isOverLimit = wordCount > wordLimit;
 
+  // Check rate limit
+  const checkRateLimit = (): { allowed: boolean; remaining: number; message: string } => {
+    const now = Date.now();
+    const rateData = localStorage.getItem(RATE_LIMIT_KEY);
+    
+    if (!rateData) {
+      localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify({
+        count: 1,
+        resetTime: now + RATE_LIMIT_WINDOW,
+      }));
+      return { allowed: true, remaining: RATE_LIMIT_MESSAGES - 1, message: '' };
+    }
+
+    const { count, resetTime } = JSON.parse(rateData);
+
+    if (now > resetTime) {
+      // Reset window
+      localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify({
+        count: 1,
+        resetTime: now + RATE_LIMIT_WINDOW,
+      }));
+      return { allowed: true, remaining: RATE_LIMIT_MESSAGES - 1, message: '' };
+    }
+
+    if (count >= RATE_LIMIT_MESSAGES) {
+      const minutesLeft = Math.ceil((resetTime - now) / 60000);
+      return {
+        allowed: false,
+        remaining: 0,
+        message: `Rate limited. Try again in ${minutesLeft} minute${minutesLeft > 1 ? 's' : ''}.`,
+      };
+    }
+
+    // Increment count
+    localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify({
+      count: count + 1,
+      resetTime,
+    }));
+
+    return { allowed: true, remaining: RATE_LIMIT_MESSAGES - count - 1, message: '' };
+  };
+
   // Save feedback to localStorage
-  const saveFeedback = (msg: string) => {
+  const saveFeedback = (msg: string, sent: boolean = true) => {
     const newFeedback: FeedbackMessage = {
       id: Date.now().toString(),
       message: msg,
@@ -55,38 +101,76 @@ export const ContactFooter = () => {
 
     const existing = localStorage.getItem(FEEDBACK_KEY);
     const feedbacks: FeedbackMessage[] = existing ? JSON.parse(existing) : [];
-    feedbacks.unshift(newFeedback); // Add to beginning
+    feedbacks.unshift(newFeedback);
     
     // Keep only last 100 messages
     const trimmed = feedbacks.slice(0, 100);
     localStorage.setItem(FEEDBACK_KEY, JSON.stringify(trimmed));
   };
 
-  // Send message to Discord webhook
-  const sendToDiscord = async (msg: string) => {
-    if (!DISCORD_WEBHOOK_URL) {
+  // Send message to Discord webhook with retry logic
+  const sendToDiscord = async (msg: string, retryCount = 0): Promise<boolean> => {
+    const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK;
+
+    if (!webhookUrl) {
       console.warn('Discord webhook not configured');
       return false;
     }
 
     try {
-      const response = await fetch(DISCORD_WEBHOOK_URL, {
+      const embed = {
+        title: '📢 New Portfolio Feedback',
+        description: msg,
+        color: 0x0ea5e9, // cyan-500
+        timestamp: new Date().toISOString(),
+        footer: {
+          text: 'Portfolio Feedback System',
+        },
+        fields: [
+          {
+            name: 'Status',
+            value: '✅ Received',
+            inline: true,
+          },
+        ],
+      };
+
+      const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          content: `📢 **New Portfolio Feedback**\n\n${msg}\n\n_Sent at ${new Date().toLocaleString()}_`,
+          embeds: [embed],
+          username: 'Portfolio Feedback',
+          avatar_url: 'https://cdn.discordapp.com/embed/avatars/0.png',
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send to Discord');
+        if (response.status === 429) {
+          // Rate limited by Discord
+          const retryAfter = response.headers.get('Retry-After');
+          const delay = retryAfter ? parseInt(retryAfter) * 1000 : RETRY_DELAY;
+          
+          if (retryCount < MAX_RETRIES) {
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return sendToDiscord(msg, retryCount + 1);
+          }
+        }
+        throw new Error(`Discord API error: ${response.status}`);
       }
 
       return true;
     } catch (error) {
       console.error('Discord webhook error:', error);
+      
+      // Retry on network errors
+      if (retryCount < MAX_RETRIES && error instanceof TypeError) {
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * (retryCount + 1)));
+        return sendToDiscord(msg, retryCount + 1);
+      }
+      
       return false;
     }
   };
@@ -94,26 +178,44 @@ export const ContactFooter = () => {
   const handleSend = async () => {
     if (!message.trim() || isOverLimit || isSending) return;
 
+    // Check rate limit
+    const rateLimit = checkRateLimit();
+    if (!rateLimit.allowed) {
+      setErrorMessage(rateLimit.message);
+      setShowError(true);
+      setTimeout(() => setShowError(false), 3000);
+      return;
+    }
+
     setIsSending(true);
     setShowError(false);
+    setErrorMessage('');
 
     try {
       // Send to Discord
-      await sendToDiscord(message.trim());
+      const discordSuccess = await sendToDiscord(message.trim());
 
-      // Save locally as backup
-      saveFeedback(message.trim());
+      // Always save locally as backup
+      saveFeedback(message.trim(), discordSuccess);
+
       setSentCount(prev => prev + 1);
       setShowBubble(true);
       setMessage('');
 
       // Hide bubble after animation
       setTimeout(() => setShowBubble(false), 2000);
+
+      if (!discordSuccess) {
+        setErrorMessage('Saved locally. Discord delivery failed.');
+        setShowError(true);
+        setTimeout(() => setShowError(false), 3000);
+      }
     } catch (error) {
       console.error('Error sending message:', error);
+      setErrorMessage('Saved locally. Try again later.');
       setShowError(true);
       // Still save to localStorage as fallback
-      saveFeedback(message.trim());
+      saveFeedback(message.trim(), false);
       setTimeout(() => setShowError(false), 3000);
     } finally {
       setIsSending(false);
@@ -200,7 +302,7 @@ export const ContactFooter = () => {
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Send a message or feedback..."
-                className="w-full h-24 bg-gray-900/50 border border-gray-700 rounded-lg p-3 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 resize-none transition-all"
+                className="w-full h-24 bg-gray-900/50 border border-gray-700 rounded-lg p-3 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 resize-none"
                 disabled={isSending}
               />
               
@@ -265,9 +367,9 @@ export const ContactFooter = () => {
                   transition={{ duration: 0.6, ease: 'easeOut' }}
                   className="absolute left-1/2 -translate-x-1/2 z-10"
                 >
-                  <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4" />
-                    <span className="text-sm font-medium">Saved Locally</span>
+                  <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 max-w-xs">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    <span className="text-sm font-medium truncate">{errorMessage || 'Saved Locally'}</span>
                   </div>
                 </motion.div>
               )}

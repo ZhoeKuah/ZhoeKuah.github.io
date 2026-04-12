@@ -144,6 +144,7 @@ export const HomePage = () => {
                   <div className="text-blue-400">→ Computer Vision & SLAM</div>
                   <div className="text-green-400">→ 3D Designing & Printing</div>
                   <div className="text-yellow-400">→ Internet Of Things</div>
+                  <div className="text-red-400">→ 2D Floor Plan Designing</div>
                 </div>
                 
                 <div className="mt-4">
